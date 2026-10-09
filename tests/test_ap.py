@@ -286,6 +286,87 @@ class Run(unittest.TestCase):
         self.assertLessEqual(len(s["beats"]), 2)
         self.assertEqual(s["beats"], sorted(set(s["beats"])))
 
+    # ── what the dashboard reads ───────────────────────────────────────────
+    def test_waiting_for_the_user_is_kept_apart_from_work(self):
+        # Ожидание ответа — не работа сборки: дашборд вычитает waits из часов
+        self.init()
+        self.ap("stage", "briefing")
+        self.ap("ask", "briefing", "--note", "три вопроса")
+        s = self.state()
+        self.assertEqual((s["waiting"]["kind"], s["waiting"]["note"]), ("briefing", "три вопроса"))
+        self.assertEqual(s["waiting"]["since"], s["updatedAt"])
+        self.ap("answered")
+        s = self.state()
+        self.assertIsNone(s["waiting"])
+        self.assertEqual(len(s["waits"]), 1)
+        self.assertEqual(s["waits"][0]["kind"], "briefing")
+        self.assertLessEqual(s["waits"][0]["from"], s["waits"][0]["to"])
+
+    def test_moving_on_closes_a_forgotten_wait(self):
+        self.init()
+        self.ap("ask", "spec")
+        self.ap("add", "report", "раз")                    # учёт — не ответ пользователя
+        self.assertIsNotNone(self.state()["waiting"])
+        self.ap("stage", "plan")
+        s = self.state()
+        self.assertIsNone(s["waiting"])
+        self.assertEqual([w["kind"] for w in s["waits"]], ["spec"])
+
+    def test_ask_needs_a_known_kind(self):
+        self.init()
+        code, _ = self.ap("ask", "whatever")
+        self.assertNotEqual(code, 0)
+
+    def test_log_records_events_not_syncs(self):
+        self.plan()
+        self.ap("tickets")
+        self.ap("ticket", "01", "start")
+        self.ap("ticket", "01", "repair", "--note", "пустой адрес")
+        self.ap("ticket", "01", "done", "--tests", "7/0", "--commit", "abc")
+        self.ap()
+        kinds = [(e["k"], e.get("act")) for e in self.state()["log"]]
+        self.assertEqual(kinds, [("init", None), ("tickets", None), ("ticket", "start"),
+                                 ("ticket", "repair"), ("ticket", "done")])
+        last = self.state()["log"][-1]
+        self.assertEqual((last["ids"], last["tests"]), (["01"], {"passed": 7, "failed": 0}))
+        self.assertEqual(self.state()["log"][3]["note"], "пустой адрес")
+
+    def test_gates_follow_the_events_that_decide_them(self):
+        self.plan()
+        self.write("manifest.md", MANIFEST.replace("| R02 | «складывает в таблицу» | in-spec",
+                                                   "| R02 | «складывает в таблицу» | open"))
+        self.ap("stage", "spec")
+        g = self.state()["gates"]["G1"]
+        self.assertEqual((g["ok"], g["open"], g["total"]), (False, 1, 4))
+        self.write("manifest.md", MANIFEST)
+        self.ap("stage", "spec", "done")
+        self.assertTrue(self.state()["gates"]["G1"]["ok"])
+        self.ap("coverage", "found=2", "fixed=1", "deferred=1")
+        self.ap("check-plan")
+        self.ap("blind", "checked=4", "matched=3", "--mismatch", "R02 — не видно")
+        g = self.state()["gates"]
+        self.assertTrue(g["G2"]["ok"])
+        self.assertTrue(g["G3"]["ok"])
+        self.assertEqual((g["G4"]["ok"], g["G4"]["matched"], g["G4"]["checked"]), (False, 3, 4))
+
+    def test_requirements_carry_the_users_words(self):
+        self.init()
+        self.write("manifest.md", MANIFEST.replace("«цвета студии»", "*(подразумевается)* «таблица \\| база»")
+                   + "| D01 | схема | in-spec | — | — |\n")
+        self.ap()
+        req = {r["id"]: r for r in self.state()["reqList"]}
+        self.assertEqual(sorted(req), ["R01", "R02", "R03", "R05"])     # D## — не требование
+        self.assertEqual(req["R01"], {"id": "R01", "text": "«принимает заявки»", "status": "in-spec"})
+        self.assertEqual(req["R03"]["why"], "«не надо»")
+        self.assertEqual(req["R05"]["text"], "(подразумевается) «таблица | база»")
+
+    def test_every_write_bumps_rev(self):
+        # Дашборд перерисовывается по rev: синхронизация тоже меняет то, что он показывает
+        self.init()
+        r = self.state()["rev"]
+        self.ap()
+        self.assertEqual(self.state()["rev"], r + 1)
+
     # ── finish ─────────────────────────────────────────────────────────────
     def test_finish_lands_the_run(self):
         self.plan()
@@ -298,6 +379,7 @@ class Run(unittest.TestCase):
         self.assertTrue(os.path.isdir(os.path.join(self.a, s["dir"])))
         self.assertTrue(all(x["status"] in ("done", "skipped") for x in s["stages"]))
         self.assertIn("| сдан | Бот принимает заявки |", read(os.path.join(self.a, "README.md")))
+        self.assertEqual(s["result"], "Бот принимает заявки")
         self.assertIn("R", self.git("status", "--short").stdout)    # переименование через git mv
 
     def test_reopen_puts_wip_back(self):

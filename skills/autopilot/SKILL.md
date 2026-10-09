@@ -4,7 +4,7 @@ description: Builds an app, site, bot, or feature end-to-end from a dictated ide
 disable-model-invocation: true
 argument-hint: "[full|semi|interview|manual] [strict|deep] что нужно построить или путь к brief.md"
 metadata:
-  version: "2.0.1"
+  version: "2.1.0"
 ---
 
 # Autopilot
@@ -82,7 +82,7 @@ Binding on every phase; the phases do not restate it.
 - **Never request one.** *Which* provider and *whether* an account exists are questions; the key, token, password or connection string never is.
 - **Redact at ingest**, before anything is written — the gate in `phases/1-manifest.md`. «Verbatim» always means «verbatim after redaction».
 - **Refer to it by name** — `STRIPE_SECRET_KEY`. The user puts values into `.env` themselves; `.env` is ignored before the first commit; the report lists the names still empty.
-- **A leaked secret is a stop condition**: reported at once, in plain words, with the advice to rotate it.
+- **A leaked secret is a stop condition**: reported at once, in plain words, with the advice to rotate it — `ap.py ask stop` first, so the dashboard says it too.
 
 ## Files this skill owns
 

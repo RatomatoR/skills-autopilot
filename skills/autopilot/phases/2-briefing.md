@@ -20,6 +20,8 @@
 Ответь номерами или «ок», если согласен со всеми.
 ```
 
+Before each round goes out: `ap.py ask briefing --note "три вопроса — где хранить заявки, ночь, отмена"`. The answers close it — `answered`, or the next round's `ask`.
+
 - **Every question names its requirement** — internally, «this closes R07». A question that closes no row is dropped.
 - **Look facts up, ask only decisions.** What stack the repo uses is a fact; which payment provider they have an account with is a decision.
 - **Blocking unknowns go in the first round** — payment, hosting, which accounts exist, where the data lives, an existing system to fit into. Asked at the end, they cost half the project.

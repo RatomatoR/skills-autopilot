@@ -76,13 +76,16 @@ Immediately after `init`, before Phase 1 asks anything.
 | G2 result | `coverage found=2 fixed=1 deferred=1 --item "R07 — отложено: …"` |
 | blind acceptance | one call: `blind checked=12 matched=11 --mismatch "R07 — статус не виден" --mismatch "…"` |
 | a full check outside a ticket | `tests 34/0` |
+| the run waits for the user — a briefing round, the manual spec or plan gate, a yes/no before an irreversible action, a stop condition | `ask briefing\|spec\|plan\|action\|stop --note "что ждём, одной строкой"` — chained with nothing: the message goes out after it |
+| the answer came | `answered` — or nothing, when the next call is a `stage` or `ticket`: those close the wait themselves |
 | the run lands | `finish --result "одна строка: что теперь есть"` |
 
 All are `python3 .autopilot/ap.py …`, and `add` takes several values in one call. **Chain a call with the command it belongs to**, so one event is one turn — the commit of a ticket and its `done` go together (`phases/5-subagents.md`, step 7). Never chain a commit after a check whose result you have not read: `| tail` always exits 0.
 
 - **Two kinds of `!` lines.** From ordinary calls — a stage skipped in the books, a ticket without a start — they are bookkeeping: fixed in the same turn, one call, not investigated. From `check-plan` they are defects of the plan, and gate G3 does not pass until they are gone.
 - Manifest rows the tool cannot know — `in-spec`, `deferred`, `dropped`, a new `G##` or `D##` — you edit in `manifest.md` yourself; `in-ticket`, `done` and `placeholder` are the tool's. The counts on the dashboard follow on the next call.
-- **Never a secret value** in any call: `emptyEnv` holds names.
+- **Never a secret value** in any call: `emptyEnv` holds names, and an `ask` note says *what* is awaited, never a value.
+- **`ask` is what puts «Ждём тебя» on the dashboard** and stops its clocks — the time the user takes to answer is not build time. A question you send without it leaves the page ticking as if work were going on.
 - The page repaints every ten seconds, counts working time rather than calendar time, and freezes at `finish`. Mention it **once**, in the opening block, and never explain it in the chat.
 
 After each ticket the user gets one plain line in the chat — what became possible, and the count: «Бот принимает заявки — 3 из 8 готово». No file lists, no ticket numbers.

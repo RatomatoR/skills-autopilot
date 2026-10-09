@@ -129,4 +129,4 @@ Act on it before leaving: *missing* → write the section; *half-covered* → wr
 
 **full, semi, interview** — two lines: what will be built and what deliberately will not, plus where the file is. Then start. In interview the user is not owed the document for their answers — they chose questions, not gates.
 
-**manual** — the spec is a gate: show it in full, wait for an explicit «ок», rewrite on every objection. Silence is not agreement, and neither is work already started.
+**manual** — the spec is a gate: `ap.py ask spec`, show it in full, wait for an explicit «ок», rewrite on every objection. Silence is not agreement, and neither is work already started.

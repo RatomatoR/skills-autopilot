@@ -18,7 +18,7 @@ Everything after `/autopilot` splits into **the mode** (`full`, `semi`, `intervi
 - **Ambiguity resolves to semi.** A mode word contradicting the rest of the sentence → the mode word wins; two mode words → ask which, in one line.
 - **Switchable mid-run** («переключись в ручной») — applies from the next phase; one line of acknowledgement, nothing replayed.
 - **Instructions in the brief** — stack, budget, «без базы данных», a deadline — are requirements in the manifest. They constrain the build; they never replace a phase.
-- **No mode removes the manifest gates or the safety gates.** Deploy, publish, pay, message a third party, delete data, rewrite history — a question in all four modes, full included.
+- **No mode removes the manifest gates or the safety gates.** Deploy, publish, pay, message a third party, delete data, rewrite history — a question in all four modes, full included, with `ap.py ask action --note "…"` before it goes out.
 
 ## Depth — how much is worked out for the user
 
