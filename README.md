@@ -19,12 +19,12 @@ Autopilot is a development framework packaged as a skill. It takes your idea, as
 It works on its own: nothing else to install.
 
 <p align="center">
-  <a href="assets/autopilot-dashboard.png"><img src="assets/dash-now.png" width="380" alt="Development in progress: what is being done now, how much is left, tasks by wave"></a>
-  <a href="assets/autopilot-dashboard.png"><img src="assets/dash-waiting.png" width="380" alt="The build is waiting for you: questions in the chat, the build clock is stopped"></a>
-  <a href="assets/autopilot-dashboard.png"><img src="assets/dash-done.png" width="380" alt="Done: the result, what is needed from you, blind acceptance"></a>
+  <a href="assets/autopilot-dashboard.png"><img src="assets/dash-now.png" width="380" alt="The header: what is happening now, how much is left, the eight stages"></a>
+  <a href="assets/autopilot-dashboard.png"><img src="assets/dash-tasks.png" width="380" alt="Build progress: every task as a coloured bar, grouped into waves"></a>
+  <a href="assets/autopilot-dashboard.png"><img src="assets/dash-done.png" width="380" alt="A finished build: keys and placeholders needed from you, blind acceptance, checks"></a>
 </p>
 
-<p align="center"><sub>In progress · waiting for you · done — <a href="assets/autopilot-dashboard.png">open the full dashboard</a></sub></p>
+<p align="center"><sub>Header · build progress · the report of a finished build — <a href="assets/autopilot-dashboard.png">open the full dashboard</a></sub></p>
 
 **And you can always see what's going on.** At the start of a build the agent opens the dashboard itself — a single HTML file you never have to find or launch. The header colour tells you the state at a glance: blue — the build is running, orange — it's waiting for your answer, green — done. Below: what is happening right now, how much is left, every task as a coloured bar and every one of your requirements in your own words. Timers tick live, the page refreshes itself, no internet needed.
 
@@ -215,6 +215,12 @@ At maximum depth one requirement from the brief unfolds into several worked-out 
 **Build progress — every state has its own colour.** Green — task done, striped orange — being written, teal — in review, purple — back from review for repair, red — failed, dashed — waiting its turn. Under a repair or review bar it says why. Tasks are grouped into waves: you can see what runs in parallel and what the next wave is waiting for.
 
 **Your words.** Every requirement from the brief — as your quote, with what became of it: done, in progress, needs your data, deferred, dropped by you. Deferred items and placeholders show the reason. This is Autopilot's main promise — nothing disappears quietly — and here you can check it with your own eyes.
+
+<p align="center">
+  <img src="assets/dash-waiting.png" width="380" alt="The build is waiting for you: questions in the chat, the build clock is stopped">
+  <img src="assets/dash-words.png" width="380" alt="Your words: every requirement quoted from the brief, with its status">
+</p>
+
 
 | Block | What it shows |
 |---|---|

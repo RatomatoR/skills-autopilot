@@ -8,7 +8,7 @@ npx skills update autopilot -g
 
 ## Unreleased
 
-- README, this changelog and `docs/` are now in English; the Russian README lives on as [README.ru.md](README.ru.md). Screenshots show the English dashboard.
+- README, this changelog and `docs/` are now in English; the Russian README lives on as [README.ru.md](README.ru.md). Screenshots show the English dashboard, each one a different part of it: the header, build progress, a finished build's report, waiting for you, your words.
 - Dashboard: in English, ticket titles in the header are quoted “like this” instead of «like this».
 
 ## 2.1.0 — 2026-10-10
