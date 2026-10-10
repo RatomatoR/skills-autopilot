@@ -4,6 +4,8 @@
 
 **An existing codebase is explored first.** When Phase 0 found code, one subagent on the cheaper model reads the repository once and writes `.autopilot/<dir>/notes.md`: where things live, the conventions in use, the commands that run it, and **the exact names of the entities, fields and functions the work will touch** — so boundaries are decided against the code that exists, and two parallel tickets do not call one field `blockedSince` and `blockedOn`. Every executor reads it later instead of exploring from scratch. A new repo has nothing to explore.
 
+**After a landed run, `carried.md` comes in twice** (`phases/0-preflight.md` §5). Its «Изменено после сборки» goes to the exploring subagent with the brief «эти места менялись после прошлой сборки — опиши их по коду, как они есть сейчас». Its «Договорились» goes into `interfaces.md` under the project rules, word for word, so every executor and reviewer gets it without reading the history: a spec section that would break one is either rewritten or, if the new brief asks for exactly that, put to the user as one line — never decided by you.
+
 **This phase does not reopen the interview.** What is still unresolved becomes a `placeholder`. One narrow exception: a genuine fork the briefing missed, where the branches are different projects — ask it once, in one line, with a recommendation. In full there is no exception: decide it and record the `ASSUMPTION`.
 
 ## Depth — the brief is a silhouette

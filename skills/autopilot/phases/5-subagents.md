@@ -71,11 +71,12 @@ In this order:
 7. **Commit and record — one call, only its zone:**
 
    ```bash
-   git add -A -- src/bot/ tests/bot/ .env.example && git commit -qm "T03: приём заявки" -- src/bot/ tests/bot/ .env.example \
+   git add -A -- src/bot/ tests/bot/ .env.example && git commit -qm "T03: приём заявки" \
+     --trailer "Autopilot-Run: 2026-10-10-repair-bot" --trailer "Requirements: R01, R02" -- src/bot/ tests/bot/ .env.example \
      && python3 .autopilot/ap.py ticket 03 done --tests 34/0 --commit "$(git rev-parse --short HEAD)"
    ```
 
-   The paths are every path of its zone that exists, plus `.env.example` if the ticket changed it — git refuses a path that matches nothing; `--tests` is what step 4 actually printed; `--placeholder R05` for each row the contract reports as a stub. One commit per ticket — the user's rollback points.
+   The paths are every path of its zone that exists, plus `.env.example` if the ticket changed it — git refuses a path that matches nothing; `--tests` is what step 4 actually printed; `--placeholder R05` for each row the contract reports as a stub. One commit per ticket — the user's rollback points. **The trailers make the history searchable after the run is gone**: `Autopilot-Run` is `dir` without `--wip` (ticket numbers restart every run, so `T03` alone names several tickets), `Requirements` the ticket's rows. `git log --grep="R02"` then finds every change a requirement ever caused.
 8. **The ledger.** Each stub the contract names → `ap.py add debt.placeholders`; each new variable → `add debt.emptyEnv NAME`; each `A##` that reached the code → `add additions`; each `CONCERNS` line about craft → `add concerns`. Project memory only if something was discovered (`phases/9-memory.md`, Moment 2) — most tickets add nothing.
 9. **One plain line to the user**: «Бот принимает заявки — 3 из 8 готово».
 

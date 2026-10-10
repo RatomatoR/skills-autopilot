@@ -118,6 +118,7 @@ Run the check once more first, truncated, and record it — `ap.py tests N/M`. T
 ## Где что лежит
 
 - Описание проекта для следующего раза — `AGENTS.md` в корне
+- Что осталось и о чём договорились — `.autopilot/PROGRESS.md`: мелкие правки можно делать в обычной сессии, она прочитает его сама
 - Почему сделано именно так — `docs/adr/`, словарь проекта — `CONTEXT.md` (если проект крупный)
 - Прогресс и цифры — `.autopilot/dashboard.html`
 - Твоя задача, требования, спецификация — `.autopilot/<папка сборки>/`
@@ -129,20 +130,58 @@ Run the check once more first, truncated, and record it — `ap.py tests N/M`. T
 - **Не приукрашивать.** Упавшее, недоделанное, найденное расхождение — прямо, с тем, что нужно для починки.
 - Без диффов, имён файлов кода и названий тестов. A section with nothing in it, except the two above, is omitted.
 
-## 4. Landing
+## 4. The progress file
+
+`.autopilot/PROGRESS.md` — where the work stands when this run lands, for whoever comes next: the next run reads it first (`phases/0-preflight.md` §5), and a plain session fixing a small bug reads it because the memory file says to (`phases/0-memory.md`). **You write it, from files re-read now**, like the report — never from memory of the dialogue. It is rewritten whole at every landing; nothing in it is lost, because the run read the previous one into `carried.md` at preflight.
+
+```markdown
+<!-- autopilot:progress -->
+# <Название проекта> — что осталось
+
+Последняя сборка: `.autopilot/<папка>/` — <итог одной строкой>.
+
+## Договорились — не пересматривать
+
+- «SMS не надо, только телега» — R03, отказ пользователя
+- Цены не трогать в коде — их меняет сам пользователь в таблице
+
+## Не доделано
+
+- Корзина — отложена: «корзину потом» (R08)
+- Ночные уведомления — таск упал: нет доступа к SMTP
+
+## Известные баги
+
+- Даты в уведомлениях в двух форматах — `src/notify.ts`
+
+## Правки без автопилота
+
+<!-- дата — что — почему; пишет обычная сессия, следующая сборка разбирает -->
+```
+
+| Section | From |
+|---|---|
+| Договорились | `dropped` rows with their quotes; lasting preferences from the briefs' `## Дополнения`; assumptions the user confirmed; `carried.md` → «Договорились» still true. **Not** what an ADR already holds — a pointer at most |
+| Не доделано | `deferred` rows with their quotes, failed tickets, `coverage` items not built; from `carried.md`, everything this run did not take |
+| Известные баги | 🔴 blind mismatches, `state.js` → `concerns` and `report` left unfixed; from `carried.md`, those this run did not fix |
+| Правки без автопилота | empty. Each entry `carried.md` brought in is now in «Договорились», in «Не доделано», or gone — a fix git already holds needs no line |
+
+Placeholders and empty variables are not repeated here — they are in the report's «Что нужно от тебя» and in `.env.example`. A section with nothing in it reads «—». Every line one thought, with the requirement number where there is one; the whole file under about sixty lines — past that, it is a backlog for the tracker, and the report says so in one line.
+
+## 5. Landing
 
 In this order, so the report names paths that exist:
 
-1. The memory file (or its proposal), the ADRs and the glossary are written.
+1. The memory file (or its proposal), the ADRs, the glossary and the progress file are written.
 2. `python3 .autopilot/ap.py finish --result "<одна строка: что теперь есть>"` — closes every stage, sets `finishedAt`, renames `<dir>--wip` to `<dir>` with `git mv`, closes the run's row in `.autopilot/README.md`, and puts the server out twelve seconds later, after the page has fetched the final picture. A `!` line about the rename means the name was taken or the index dirty: leave it, the run is not undone by a cosmetic suffix.
 3. **The final commit** — exactly what this skill wrote since the plan commit, never the rest of the tree, where the user may have work of their own:
 
    ```bash
    git add -A -- .autopilot AGENTS.md CLAUDE.md docs/architecture.md docs/adr CONTEXT.md GLOSSARY.md .env.example .gitignore \
-     && git commit -qm "Autopilot: сборка сдана" -- .autopilot AGENTS.md CLAUDE.md docs/architecture.md docs/adr CONTEXT.md GLOSSARY.md .env.example .gitignore
+     && git commit -qm "Autopilot: сборка сдана" --trailer "Autopilot-Run: <папка>" -- .autopilot AGENTS.md CLAUDE.md docs/architecture.md docs/adr CONTEXT.md GLOSSARY.md .env.example .gitignore
    ```
 
-   Leave out of both lists any path that does not exist, and the memory file if it is the user's own. The code itself went in ticket by ticket. `git status` afterwards: a changed file outside everything any ticket owned is not committed by you — it goes in the report as «осталось незакоммиченным».
+   Leave out of both lists any path that does not exist, and the memory file if it is the user's own. **The subject stays exactly «Autopilot: сборка сдана»** — the next run and every plain session find the landing by it. The code itself went in ticket by ticket. `git status` afterwards: a changed file outside everything any ticket owned is not committed by you — it goes in the report as «осталось незакоммиченным».
 4. The report.
 
 The dashboard freezes on the final numbers and carries them inside the page, so it reopens by double-click long after the server is gone. Say nothing about any of this.

@@ -11,6 +11,14 @@ npx skills update autopilot -g
 - README, this changelog and `docs/` are now in English; the Russian README lives on as [README.ru.md](README.ru.md). Screenshots show the English dashboard, each one a different part of it: the header, build progress, a finished build's report, waiting for you, your words.
 - Dashboard: in English, ticket titles in the header are quoted “like this” instead of «like this».
 
+**Memory between builds**
+- `.autopilot/PROGRESS.md` — what a finished build left: what you settled ("no SMS"), what is not done, known bugs. Rewritten at every landing.
+- Small fixes without a new build: `AGENTS.md` now tells a plain session what to read first (the progress file and the commits since the last build) and what to write back after the fix.
+- `AGENTS.md` also gets a "git history" section: which slice of the log answers which question (since the last build, by requirement, by file, by code fragment, by line), never the whole log, and how to word a commit so the next build can trace it.
+- The next build reads the progress file and the history since the last landing before anything else. It offers the leftovers in the first briefing round, never takes them on its own, and passes what you settled to every executor as project rules.
+- Commits carry `Autopilot-Run` and `Requirements` trailers, so `git log --grep="R02"` finds everything a requirement ever caused.
+- `ap.py commits` — on resume, flags finished tickets whose commit is no longer in the history (a reset or a rebase), so they are rebuilt instead of trusted.
+
 ## 2.1.0 — 2026-10-10
 
 **New dashboard**

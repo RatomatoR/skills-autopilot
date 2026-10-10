@@ -21,20 +21,20 @@ This file is the orchestrator: order, gates, the rules that never lose. Each pha
 
 | Phase | Read | Produces |
 |---|---|---|
-| 0 Preflight | `phases/0-modes.md`, `phases/0-preflight.md`, then `0-memory.md`, `0-instruments.md` | mode announced, repo configured, dashboard open |
+| 0 Preflight | `phases/0-modes.md`, `phases/0-preflight.md`, then `0-memory.md`, `0-instruments.md` | mode announced, repo configured, dashboard open, `carried.md` after a landed run |
 | 1 Manifest | `phases/1-manifest.md` | `<дата>-brief.md`, `manifest.md` |
 | 2 Briefing | `phases/2-briefing.md` (+ `2-adversarial.md` when it runs) | answers recorded into the manifest |
 | 3 Spec | `phases/3-spec.md` | `notes.md` in existing code, `spec.md`, the boundaries in `interfaces.md` |
 | 4 Plan | `phases/4-plan.md` | `tickets/NN-*.md`, the plan commit |
 | 5 Build | `phases/5-subagents.md` | code, one commit per ticket |
 | 6 Review | `phases/6-review.md` — at the first point review, and for the whole-branch review | reviewed code |
-| 8 Final | `phases/8-final.md`, and `phases/9-memory.md` before spawning | blind acceptance, memory, report |
+| 8 Final | `phases/8-final.md`, and `phases/9-memory.md` before spawning | blind acceptance, memory, progress file, report |
 | — | `phases/0-resume.md` — instead of preflight, when resuming | |
 | — | `phases/5-repair.md` — when a ticket comes back anything but a clean `DONE` | |
 | — | `phases/9-memory.md` — also in Phase 5, when a ticket discovered something worth keeping | |
 | — | `phases/rationalizations.md` — on a failed gate, on catching yourself excusing something, once before the report | |
 
-**After a compaction, re-read the state, not the phases:** `state.js` (it holds `dir` and `skillDir`), `manifest.md`, `interfaces.md`, and the file of the phase you are in. Nothing else.
+**After a compaction, re-read the state, not the phases:** `state.js` (it holds `dir` and `skillDir`), `manifest.md`, `interfaces.md`, `carried.md` if the run has one, and the file of the phase you are in. Nothing else.
 
 ## The words the user sees
 
@@ -95,9 +95,11 @@ Binding on every phase; the phases do not restate it.
 │   ├── spec.md                 the specification
 │   ├── interfaces.md           the boundaries, the project rules, what finished tickets built
 │   ├── notes.md                exploration notes, in an existing codebase
+│   ├── carried.md              what the last run left, read at preflight — after a landed run only
 │   ├── memory-proposal.md      what to add to the user's own memory file, if it is theirs
 │   └── tickets/NN-<slug>.md
 ├── README.md        how to read this folder, and the register of runs
+├── PROGRESS.md       where the work stands between runs — read by the next run and by plain sessions
 ├── state.js         the run state — written only by ap.py
 ├── ap.py            one call per event: state, dashboard, server
 ├── dashboard.html   the human view; carries a snapshot of the state
@@ -108,7 +110,7 @@ docs/architecture.md, docs/adr/        at T2+: how it is built, and why
 CONTEXT.md                             at T2+: the project's words — or the user's own, only added to
 ```
 
-`.autopilot/` is committed — it is the user's record of what was promised and delivered. The memory file is the project as it stands for whoever opens it next; `docs/adr/` is why it stands that way; `CONTEXT.md` is what its words mean; `spec.md` is throwaway once the work ships.
+`.autopilot/` is committed — it is the user's record of what was promised and delivered. The memory file is the project as it stands for whoever opens it next; `docs/adr/` is why it stands that way; `CONTEXT.md` is what its words mean; `PROGRESS.md` is what is still open and what the user settled — the one file a session without Autopilot updates; `spec.md` is throwaway once the work ships.
 
 ## Judgement
 

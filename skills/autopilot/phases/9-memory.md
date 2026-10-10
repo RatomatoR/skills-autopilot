@@ -9,8 +9,11 @@ The file the **next** session reads first. Chosen in Phase 0 (`phases/0-memory.m
 | the memory file | what an agent needs to work here **tomorrow** | present tense |
 | `docs/adr/` | **why** it is this way, and what was rejected | past tense on purpose |
 | `CONTEXT.md` | what the project's words **mean**, and which synonyms to avoid | present tense, no code |
+| `.autopilot/PROGRESS.md` | what the work left **open** — not done, known bugs, what the user settled in the dialogue — and what was fixed without Autopilot since | rewritten at each landing (`phases/8-final.md`) |
 
 Everything in the memory file must be true of the repository as it stands — not of the plan.
+
+**The memory file is how to work here; the progress file is where the work stands.** A trap, a command, a pointer → memory. Something unfinished, a bug that shipped, «пользователь сказал: без SMS» → progress file. The memory file points to the progress file and never retells it.
 
 ## Whose file it is
 
@@ -70,7 +73,7 @@ Before the block is written:
 
 ### When the file is the user's
 
-The same agent writes `memory-proposal.md` instead of the block: what is missing — new commands, variables, traps, pointers — and what in their text is now false, each as a ready-to-paste line. Nothing else.
+The same agent writes `memory-proposal.md` instead of the block: what is missing — new commands, variables, traps, pointers — and what in their text is now false, each as a ready-to-paste line. **The «Правка без автопилота» and «История git» subsections from `phases/0-memory.md` are always among them** when their file lacks them: without them a session that is not Autopilot never finds `PROGRESS.md`, and its commits cannot be traced to a requirement. Nothing else.
 
 The report asks once, at the end: «Предлагаю дополнить твой `CLAUDE.md`: 4 пункта — команды запуска и две переменные `.env`. Применить?» — in semi, interview and manual. **In full nothing is asked**: the proposal stays a file, and the report names it. On a yes, the additions go into a marked Autopilot block at the end of their file; a line of their own text changes only as they approved it.
 

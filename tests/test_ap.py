@@ -393,6 +393,27 @@ class Run(unittest.TestCase):
         self.assertEqual(self.stage("final")["status"], "pending")
         self.assertNotIn("finishedAt", self.stage("final"))
 
+    def test_commits_flags_a_done_ticket_whose_commit_left_history(self):
+        self.plan()
+        self.ap("tickets")
+        commit = lambda m: self.git("-c", "user.email=t@t", "-c", "user.name=t", "commit", "-q", "--allow-empty", "-m", m)
+        commit("T01")
+        kept = self.git("rev-parse", "--short", "HEAD").stdout.strip()
+        commit("T02")
+        lost = self.git("rev-parse", "--short", "HEAD").stdout.strip()
+        self.ap("ticket", "01", "done", "--commit", kept)
+        self.ap("ticket", "02", "done", "--commit", lost)
+        events = len(self.state()["log"])
+        code, out = self.ap("commits")
+        self.assertIn("коммиты сданных тасков на месте", out)
+        self.git("reset", "-q", "--hard", kept)
+        code, out = self.ap("commits")
+        self.assertEqual(code, 0, out)
+        self.assertIn("! таск 02: коммита %s нет в истории" % lost, out)
+        self.assertNotIn("таск 01", out)
+        self.assertEqual(self.state()["tickets"][1]["status"], "done")   # сбрасывает оркестратор
+        self.assertEqual(len(self.state()["log"]), events)               # проверка — не событие
+
 
 class Pure(unittest.TestCase):
     """Функции без процесса: опознание своего сервера и версия навыка."""

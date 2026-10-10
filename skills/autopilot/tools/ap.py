@@ -26,6 +26,7 @@
     python3 .autopilot/ap.py answered                   # ответил (stage/ticket закрывают сами)
     python3 .autopilot/ap.py finish --result "Бот принимает заявки и пишет их в таблицу"
     python3 .autopilot/ap.py reopen                     # второй бриф в сданном прогоне
+    python3 .autopilot/ap.py commits                    # коммиты сданных тасков ещё в истории?
     python3 .autopilot/ap.py                            # просто синхронизировать
 
 После каждой команды: updatedAt = сейчас (и метка в журнале beats), строка в ленте log,
@@ -675,6 +676,8 @@ README_TEXT = """# Как читать эту папку
   - `<дата>-brief.md` — твоя задача слово в слово и «Дополнения» — всё, что ты сказал позже.
   - `manifest.md` — список требований и что с каждым стало.
   - `spec.md` — спецификация. `tickets/` — таски, на которые разбита сборка.
+- `PROGRESS.md` — что осталось после последней сборки: не доделано, известные баги,
+  о чём договорились. Мелкие правки без автопилота дописываются сюда же.
 
 Если сборка прервалась — скажи агенту «продолжи автопилот», он поднимет состояние отсюда.
 
@@ -974,6 +977,23 @@ def cmd_reopen(state):
     log(state, "reopen")
 
 
+def cmd_commits(state):
+    """Возобновление верит state.js, а история могла уйти из-под него: reset, rebase,
+    другая ветка. Сданный таск, чьего коммита нет в HEAD, — строка «!»; сбрасывает
+    его оркестратор, потому что код после rebase может лежать на месте под другим sha."""
+    notes = []
+    for tk in state.get("tickets") or []:
+        c = tk.get("commit")
+        if tk.get("status") != "done" or not c:
+            continue
+        r = subprocess.run(["git", "-C", ROOT, "merge-base", "--is-ancestor", c, "HEAD"],
+                           capture_output=True)
+        if r.returncode:
+            notes.append("! таск %s: коммита %s нет в истории — `ap.py ticket %s reset`"
+                         % (tk["id"], c, tk["id"]))
+    return notes or ["коммиты сданных тасков на месте"]
+
+
 def main():
     argv = sys.argv[1:]
     if "--stop-now" in argv:
@@ -989,7 +1009,7 @@ def main():
         if state is None:
             die("state.js ещё нет — начни с `ap.py init`")
         rest = pos[1:]
-        if cmd not in ("", "sync"):
+        if cmd not in ("", "sync", "commits"):
             # Время события ставится до команды: ей самой и ленте нужна одна метка.
             state["updatedAt"] = now()
             beat(state)
@@ -1025,6 +1045,8 @@ def main():
             notes = cmd_finish(state, opt)
         elif cmd == "reopen":
             cmd_reopen(state)
+        elif cmd == "commits":
+            notes = cmd_commits(state)
         elif cmd not in ("", "sync"):
             die("неизвестная команда %s — список в начале ap.py" % cmd)
     recount(state)

@@ -53,6 +53,8 @@ In priority order, only what is actually unresolved for this brief:
 6. **Contradictions inside the brief** — quote both halves, ask which wins.
 7. **Scope edges** — what is explicitly *not* needed; the answers become `dropped` rows and save whole tickets.
 
+**What the last run left** — `carried.md` → «Не доделано» and «Известные баги», when the file exists — is **one question in the first round**, whatever else the round holds, and it keeps a round from being skipped: «С прошлой сборки остались: 1) корзина, 2) даты в двух форматах. Взять что-то в эту? Я бы взял 2 — это пять минут». A yes is the user adding a requirement: a `G##` row with their answer and the item it names, and the same words under `## Дополнения`. A no, or no answer to that item, leaves it in the progress file — nothing is dropped for being ignored. In full nothing is offered and nothing taken.
+
 ## Эталон — what it should be like
 
 Whatever the user hands you that the result could be measured against — reference sites, a competitor, screenshots, a text whose tone they like, «как в приложении банка» — goes into `.autopilot/<dir>/reference.md`, one line each, verbatim after redaction, with where it came from. It travels to **the executors of tickets that build a surface** (`phases/5-subagents.md`), so the first version already looks like what they meant.

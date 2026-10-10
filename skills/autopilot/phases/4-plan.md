@@ -104,11 +104,11 @@ Every ticket of the chain carries the same requirement. It applies when the chan
 **Then the plan commit** — the run's first, and the base every later diff is measured from. Run the redaction gate over `.autopilot/` (`phases/1-manifest.md`), then commit exactly the files this skill wrote so far — never anything else in the tree:
 
 ```bash
-git add -A -- .autopilot .gitignore AGENTS.md CLAUDE.md .env.example && git commit -qm "Autopilot: план сборки" -- .autopilot .gitignore AGENTS.md CLAUDE.md .env.example \
+git add -A -- .autopilot .gitignore AGENTS.md CLAUDE.md .env.example && git commit -qm "Autopilot: план сборки" --trailer "Autopilot-Run: <папка>" -- .autopilot .gitignore AGENTS.md CLAUDE.md .env.example \
   && python3 .autopilot/ap.py set baseCommit="$(git rev-parse --short HEAD)"
 ```
 
-Leave out of both lists any file that does not exist, and the memory file if it is the user's own.
+Leave out of both lists any file that does not exist, and the memory file if it is the user's own. `<папка>` is `dir` without `--wip`, the same in every commit of the run.
 
 A ticket that exists only in the dialogue is not a ticket — the user is shown a summary of files already on disk.
 
