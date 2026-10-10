@@ -1,84 +1,89 @@
-# Что нового в Autopilot
+# What's new in Autopilot
 
-Версия навыка — поле `metadata.version` в `skills/autopilot/SKILL.md`. В начале каждой сборки Autopilot сверяет её с этим репозиторием и одной строкой говорит, если вышла новая. Обновление:
+The skill's version is the `metadata.version` field in `skills/autopilot/SKILL.md`. At the start of every build, Autopilot checks it against this repository and tells you in one line if a newer version is out. To update:
 
 ```bash
 npx skills update autopilot -g
 ```
 
+## Unreleased
+
+- README, this changelog and `docs/` are now in English; the Russian README lives on as [README.ru.md](README.ru.md). Screenshots show the English dashboard.
+- Dashboard: in English, ticket titles in the header are quoted “like this” instead of «like this».
+
 ## 2.1.0 — 2026-10-10
 
-**Новый дашборд**
-- Цвет шапки говорит, что происходит: синяя — сборка работает, оранжевая — ждёт вас, зелёная — сдано, красная — этап не прошёл. Под ней — одна фраза словами («Сдано 2 таска из 6, ещё 3 в работе») и восемь этапов полосой.
-- **«Ждём тебя».** Когда агент задаёт вопрос — брифинг, «ок» на спецификацию или план в ручном режиме, решение перед необратимым шагом, — шапка становится оранжевой, вкладка браузера пишет «● Ждём ответа», а часы сборки стоят: время вашего ответа больше не считается работой.
-- Таски снова яркими полосами, и у каждого состояния свой цвет: сдан, пишется, на проверке, в ремонте, не собрался, ждёт. Под полосой ремонта — что именно вернуло ревью, под проверкой — почему таск проверяют отдельно.
-- **«Твои слова».** Каждое требование из брифа — вашей цитатой и с тем, что с ним стало; у отложенного и заглушки — причина. Фильтр по статусу.
-- **Проверки G1–G4** на виду: бриф разобран, спецификация ничего не потеряла, план покрывает все требования, слепая приёмка.
-- **Лента событий** — что произошло, словами: таск сдан, ушёл на проверку, вернулся в ремонт.
-- Оценка «осталось» теперь включает код-ревью и приёмку — на реальных прогонах это почти половина времени, а раньше она кончалась вместе с разработкой.
-- Сданная сборка — это отчёт: что получилось, что нужно от вас перед запуском (ключи, заглушки), расхождения слепой приёмки, открытые вопросы и замечания ревью. Раньше замечания ревью и пункты отчёта собирались, но на экран не попадали.
-- В узкой панели рядом с чатом дашборд плотнее: те же блоки без гигантских цифр.
-- Настоящий логотип одной картинкой — страница легче на ~25 КБ.
-- Убраны: дублирующая таблица тасков, четыре разных процента, кольцо, «ярус» и «критический путь» на главном экране.
+**New dashboard**
+- The header color tells you what is going on: blue means the build is running, orange means it is waiting for you, green means done, red means a stage failed. Below it are one plain sentence ("2 of 6 tickets done, 3 more in progress") and the eight stages as a strip.
+- **"Waiting for you".** When the agent asks you something — the briefing, an "ok" on the spec or the plan in manual mode, a decision before an irreversible step — the header turns orange, the browser tab reads "● Waiting for you", and the build clock stops: the time you take to answer no longer counts as work.
+- Tasks are back as bright bars, with a color for each state: done, writing, in review, in repair, failed, waiting. Under a repair bar you see exactly what the review sent back; under a review bar, why the task is being reviewed on its own.
+- **"Your words".** Every requirement from the brief, quoted in your words, with what became of it; deferred ones and placeholders show the reason. Filter by status.
+- **Checks G1–G4** in plain sight: the brief is fully read, the spec lost nothing, the plan covers every requirement, blind acceptance.
+- **Feed** — what happened, in words: task done, sent to review, back for repair.
+- The "left" estimate now includes code review and acceptance. On real runs that is almost half the time, yet the estimate used to end along with development.
+- A finished build is a report: what came out, what you need to provide before running it (keys, placeholders), blind acceptance disagreements, open questions and review notes. Review notes and report items used to be collected but never reached the screen.
+- In a narrow panel next to the chat, the dashboard is denser: the same blocks without the huge numbers.
+- The real logo as a single image — the page is ~25 KB lighter.
+- Removed from the main screen: the duplicate task table, four different percentages, the ring, "tier" and "critical path".
 
-**Под капотом**
-- `ap.py ask <briefing|spec|plan|action|stop> --note "…"` и `ap.py answered` — сборка ждёт пользователя. Забытый `answered` закрывается первым же переходом этапа или событием таска.
-- `ap.py` сам ведёт ленту событий (`log`), отмечает гейты (`gates`) по событиям, которые их решают, и кладёт в состояние список требований с цитатами (`reqList`) и итог сборки (`result`).
-- Страница перерисовывается по счётчику `rev`: синхронизация без события тоже доходит до экрана.
+**Under the hood**
+- `ap.py ask <briefing|spec|plan|action|stop> --note "…"` and `ap.py answered` — the build is waiting for the user. A forgotten `answered` is closed by the next stage transition or task event.
+- `ap.py` now keeps the event feed itself (`log`), marks gates (`gates`) from the events that decide them, and puts the list of quoted requirements (`reqList`) and the build outcome (`result`) into the state.
+- The page re-renders on the `rev` counter, so a sync without an event still reaches the screen.
 
 ## 2.0.1 — 2026-10-02
 
-**Дашборд**
-- Время работы больше не теряется, когда компьютер засыпает или сервер дашборда падает: каждое событие сборки теперь записывается в состояние, а не только туда, где его увидела открытая страница.
-- Упавший сервер поднимается на том же адресе, и открытая вкладка оживает сама — перезагружать не нужно. Раньше он мог переехать на другой порт, и вкладка оставалась мёртвой.
-- Если связь пропала, дашборд пишет об этом сверху и подсказывает, что сказать агенту.
-- Стрелка по кругу сверху теперь обновляет дашборд сразу. Раньше это был выключатель автообновления: нажатие молча останавливало обновления.
+**Dashboard**
+- Working time is no longer lost when the computer sleeps or the dashboard server crashes: every build event is now written to the state, not only to wherever an open page happened to see it.
+- A crashed server comes back on the same address, and an open tab comes back to life by itself — no reload needed. It used to be able to move to another port, leaving the tab dead.
+- If the connection drops, the dashboard says so at the top and suggests what to tell the agent.
+- The circular arrow at the top now refreshes the dashboard right away. It used to be an auto-refresh toggle: clicking it silently stopped updates.
 
 ## 2.0.0 — 2026-10-01
 
-Первая версия с номером. Всё, что было до неё, считается 1.x. Первый час после выхода она называлась 1.1.0 — это та же версия.
+The first numbered version. Everything before it counts as 1.x. For its first hour after release it was called 1.1.0 — that is the same version.
 
-**Запуск**
-- Autopilot запускается только командой `/autopilot`. Раньше он мог стартовать сам на фразах вроде «собери под ключ» — и сразу создавать репозиторий и коммитить. Продолжить прерванную сборку — `/autopilot` без слов.
+**Launch**
+- Autopilot starts only with the `/autopilot` command. It used to be able to start on its own on phrases like "build it turnkey" — and immediately create a repository and commit. To resume an interrupted build, run `/autopilot` with no arguments.
 
-**Дешевле и быстрее — главное в этой версии**
-- Ревью больше не идёт после каждого таска. До коммита проверяются только фундамент (каркас, схема, общие модули) и рискованные таски — вход и права, деньги, удаление данных, секреты, сообщения третьим лицам. В конце — одно ревью всей сборки, с проверкой безопасности; всё, что стоит поправить, делает один исполнитель. На реальных прогонах ревью и ремонты съедали 13–47 % расхода.
-- На ремонт уходит только то, что ревьюер пометил блокирующим, — дословно.
-- Рутинные таски собирает модель попроще, фундамент и рискованные — сильная.
-- Вопросы в брифинге приходят раундами: несколько сразу, с рекомендованным ответом у каждого, «ок» принимает все.
-- Учёт сборки ведёт `ap.py`: одна команда на событие вместо ручных правок `state.js`, время ставит скрипт, статусы требований в манифесте и гейт G3 — тоже он.
-- Инструкции, которые агент держит в голове до начала разработки, ужались со 188 до 75 КБ: обоснования переехали в `docs/autopilot/design.md`, редкие ветки — в отдельные файлы.
+**Cheaper and faster — the main point of this version**
+- Review no longer runs after every task. Before commit, only the foundation (scaffold, schema, shared modules) and risky tasks are reviewed — login and permissions, money, data deletion, secrets, messages to third parties. At the end there is one review of the whole build, security included; everything worth fixing is done by a single executor. On real runs, reviews and repairs ate 13–47% of the spend.
+- Only what the reviewer marked as blocking goes to repair — verbatim.
+- Routine tasks are built by a lighter model; the foundation and risky tasks by a strong one.
+- Briefing questions come in rounds: several at once, each with a recommended answer, and "ok" accepts them all.
+- `ap.py` keeps the build's books: one command per event instead of hand-editing `state.js`. The script sets the times, and it also handles requirement statuses in the manifest and gate G3.
+- The instructions the agent keeps in mind before development starts shrank from 188 to 75 KB: the rationale moved to `docs/autopilot/design.md`, rare branches to separate files.
 
-**Качество**
-- Приёмка ставит проект с нуля в чистой копии репозитория — ловит незаписанные зависимости и незакоммиченные файлы.
-- Исполнитель доказывает, что новый тест падал до кода (строка `REDPROOF`), а проверка — одна команда: тесты, типы, линтер.
-- Каждый критерий приёмки ложен на старте таска.
-- В существующем коде один агент сначала пишет заметки о проекте — точные имена сущностей для всех исполнителей.
-- Субагенты не вызывают другие скиллы и не запускают своих агентов.
-- Эталоны пользователя (сайты-примеры) уходят исполнителям интерфейсных тасков сразу.
-- Самый маленький проект тоже собирает отдельный исполнитель — оркестратор кода не пишет никогда.
-- Autopilot коммитит только свои файлы: код — по зоне таска, остальное — списком. Незакоммиченная работа пользователя в дереве не уезжает в его коммиты.
-- Исполнитель и приёмка не делают ничего наружу: ни `git push`, ни деплоя, ни настоящих писем и оплат.
-- Имена в коде — по-английски, без транслита: `order`, а не `zakaz`. В чужом коде действует его соглашение.
-- Широкое изменение в существующем коде — переименовать поле, сменить тип денег, заменить библиотеку — режется на три шага: новое рядом со старым, перевод по зонам, удаление старого. Раньше такой таск не мог стать зелёным.
+**Quality**
+- Acceptance installs the project from scratch in a clean copy of the repository, which catches unrecorded dependencies and uncommitted files.
+- The executor proves the new test failed before the code was written (the `REDPROOF` line), and verification is a single command: tests, types, linter.
+- Every acceptance criterion is false at the start of the task.
+- In an existing codebase, one agent first writes notes on the project — the exact names of entities for every executor.
+- Subagents do not call other skills or launch their own agents.
+- Your references (example sites) go to the executors of UI tasks right away.
+- Even the smallest project is built by a separate executor — the orchestrator never writes code.
+- Autopilot commits only its own files: code by the task's zone, everything else by an explicit list. Your uncommitted work in the tree does not slip into its commits.
+- The executor and acceptance never do anything external: no `git push`, no deploys, no real emails or payments.
+- Names in code are in English, no transliteration: `order`, not `zakaz`. In someone else's code, that code's convention applies.
+- A wide change in existing code — renaming a field, changing the money type, replacing a library — is split into three steps: the new alongside the old, migration zone by zone, removal of the old. Such a task used to be unable to go green.
 
-**Убрано**
-- Режим `polish` (доводка до эталона) — за восемь реальных прогонов его не включили ни разу.
-- Передача таска между контекстами по счётчику вызовов — за ~60 тасков сработала один раз.
+**Removed**
+- `polish` mode (refining to match a reference) — in eight real runs it was never turned on.
+- Handing a task over between contexts based on a call counter — in ~60 tasks it fired once.
 
-**Память проекта**
-- Новый проект получает `AGENTS.md` и однострочный `CLAUDE.md` со ссылкой на него — так файл читают и Claude Code, и Codex, и Cursor.
-- Если в проекте уже есть свой `CLAUDE.md` или `AGENTS.md`, Autopilot его не трогает, а в конце предлагает, что дописать, и спрашивает.
-- Память — указатели и подводные камни, а не пересказ кода; архитектура крупных проектов — в `docs/architecture.md`.
-- В крупных проектах в конце сборки появляется словарь `CONTEXT.md`: слова этого проекта («заявка», «смена», «бронь»), что каждое значит и какими синонимами его не называть. Следующая сборка в том же репозитории читает его первым и пишет спецификацию теми же словами. Раньше термины попадали в отдельную запись о решении (ADR), а точные имена из заметок о коде пропадали вместе со сборкой. Формат — как у `domain-modeling` Мэтта Пакока, только без вопросов пользователю: словарь пишет тот же агент, что и ADR, без дополнительной стоимости.
-- Свой словарь Autopilot держит в актуальном виде, а не только дополняет: если сборка поменяла смысл слова, определение переписывается, если убрала понятие — термин удаляется. Слова, которых сборка не касалась, не трогаются. Свой словарь Autopilot узнаёт по метке в первой строке.
-- Словарь пользователя (`CONTEXT.md` или `GLOSSARY.md` без метки) Autopilot только дополняет: старые определения не меняет, расхождения выносит вопросом в отчёт. В репозитории с несколькими областями (`CONTEXT-MAP.md`) словарь не пишется.
-- Когда в словаре больше сорока терминов, отчёт предлагает разделить его на области. Сам Autopilot его не делит.
+**Project memory**
+- A new project gets `AGENTS.md` and a one-line `CLAUDE.md` that points to it, so Claude Code, Codex and Cursor all read the file.
+- If the project already has its own `CLAUDE.md` or `AGENTS.md`, Autopilot leaves it alone and at the end suggests what to add and asks you.
+- Memory holds pointers and pitfalls, not a retelling of the code; the architecture of large projects goes in `docs/architecture.md`.
+- In large projects, a `CONTEXT.md` glossary appears at the end of the build: the project's own words ("request", "shift", "booking"), what each one means and which synonyms not to use for it. The next build in the same repository reads it first and writes the spec in the same words. Terms used to land in a separate decision record (ADR), and the exact names from the code notes were lost along with the build. The format follows Matt Pocock's `domain-modeling`, only without questions to the user: the glossary is written by the same agent that writes the ADR, at no extra cost.
+- Autopilot keeps its own glossary up to date rather than only appending to it: if a build changed the meaning of a word, the definition is rewritten; if it removed a concept, the term is deleted. Words the build did not touch are left alone. Autopilot recognizes its own glossary by a marker in the first line.
+- Your own glossary (`CONTEXT.md` or `GLOSSARY.md` without the marker) Autopilot only appends to: it does not change existing definitions and raises conflicts as questions in the report. In a repository with several areas (`CONTEXT-MAP.md`), no glossary is written.
+- When the glossary has more than forty terms, the report suggests splitting it into areas. Autopilot does not split it itself.
 
-**Уведомления об обновлениях**
-- В начале сборки — строка, если вышла новая версия. Без интернета проверка молчит; выключается переменной `AUTOPILOT_NO_UPDATE_CHECK=1`.
+**Update notifications**
+- At the start of a build, a line if a new version is out. Without internet the check stays silent; turn it off with the `AUTOPILOT_NO_UPDATE_CHECK=1` variable.
 
-**Windows и дашборд**
-- Дашборд больше не плодит серверы на Windows и гасит свой сервер в конце на любой системе.
-- Этап, чей файл уже лежит на диске, отмечается пройденным сам.
-- Требования в таблице тасков красятся: выполнено / частично.
+**Windows and the dashboard**
+- The dashboard no longer spawns multiple servers on Windows and shuts its server down at the end on every OS.
+- A stage whose file is already on disk is marked as passed automatically.
+- Requirements in the task table are color-coded: done / partial.

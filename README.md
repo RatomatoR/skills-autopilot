@@ -10,354 +10,356 @@
   <a href="https://skills.sh/nick-vels/skills"><img src="https://skills.sh/b/nick-vels/skills" alt="skills.sh"></a>
 </p>
 
-<p align="center"><strong>Расскажи словами, что нужно построить — получи готовый проект.</strong></p>
+<p align="center"><strong>Describe what you want built — get a finished project.</strong></p>
 
-Autopilot — фреймворк разработки, skill, который берёт вашу идею, задаёт вопросы ровно там, где в ней есть развилки, а дальше сам пишет спецификацию, продумывает то, о чём вы не думали, разбивает работу на таски и собирает проект целиком. Вам не нужно читать спецификацию, оценивать таски или разбираться в коде.
+<p align="center"><b>English</b> · <a href="README.ru.md">Русский</a></p>
 
-Работает сам по себе: ставить что-то ещё не нужно.
+Autopilot is a development framework packaged as a skill. It takes your idea, asks questions exactly where the idea forks, and then does the rest on its own: writes the spec, thinks through what you didn't, splits the work into tasks and builds the whole project. You don't have to read the spec, size the tasks or understand the code.
+
+It works on its own: nothing else to install.
 
 <p align="center">
-  <a href="assets/autopilot-dashboard.png"><img src="assets/dash-now.png" width="380" alt="Идёт разработка: что делается сейчас, сколько осталось, таски по волнам"></a>
-  <a href="assets/autopilot-dashboard.png"><img src="assets/dash-waiting.png" width="380" alt="Сборка ждёт тебя: вопросы в чате, часы сборки стоят"></a>
-  <a href="assets/autopilot-dashboard.png"><img src="assets/dash-done.png" width="380" alt="Сдано: итог, что нужно от тебя, слепая приёмка"></a>
+  <a href="assets/autopilot-dashboard.png"><img src="assets/dash-now.png" width="380" alt="Development in progress: what is being done now, how much is left, tasks by wave"></a>
+  <a href="assets/autopilot-dashboard.png"><img src="assets/dash-waiting.png" width="380" alt="The build is waiting for you: questions in the chat, the build clock is stopped"></a>
+  <a href="assets/autopilot-dashboard.png"><img src="assets/dash-done.png" width="380" alt="Done: the result, what is needed from you, blind acceptance"></a>
 </p>
 
-<p align="center"><sub>Идёт работа · ждём тебя · сдано — <a href="assets/autopilot-dashboard.png">открыть дашборд целиком</a></sub></p>
+<p align="center"><sub>In progress · waiting for you · done — <a href="assets/autopilot-dashboard.png">open the full dashboard</a></sub></p>
 
-**И вы всё время видите, что происходит.** В начале сборки агент сам открывает дашборд — один HTML-файл, который не надо искать и запускать. Цвет шапки сразу говорит, что происходит: синяя — сборка работает, оранжевая — она ждёт вашего ответа, зелёная — сдано. Ниже — что делается прямо сейчас, сколько ещё осталось, каждый таск цветной полосой и каждое ваше требование вашими же словами. Таймеры идут вживую, страница обновляется сама, интернет не нужен.
+**And you can always see what's going on.** At the start of a build the agent opens the dashboard itself — a single HTML file you never have to find or launch. The header colour tells you the state at a glance: blue — the build is running, orange — it's waiting for your answer, green — done. Below: what is happening right now, how much is left, every task as a coloured bar and every one of your requirements in your own words. Timers tick live, the page refreshes itself, no internet needed.
 
 ---
 
-## Установка
+## Installation
 
-### Не хотите открывать терминал
+### If you'd rather not open a terminal
 
-Откройте своего AI-агента — Claude Code, Cursor, Codex — и вставьте ему этот текст:
+Open your AI agent — Claude Code, Cursor, Codex — and paste this:
 
 ```
-Установи мне навык Autopilot. Выполни в терминале:
+Install the Autopilot skill for me. Run in the terminal:
 
-npx skills add nick-vels/skills --skill autopilot -g -y -a <подставь себя: claude-code, cursor, codex>
+npx skills add nick-vels/skills --skill autopilot -g -y -a <put yourself here: claude-code, cursor, codex>
 
-Если npx не найдётся — дай мне ссылку, где скачать Node.js, и подожди.
-Больше ничего не устанавливай.
-Когда закончишь — напиши одной строкой, что готово и что надо перезапустить сессию.
+If npx is not found, give me a link to download Node.js and wait.
+Don't install anything else.
+When you're done, tell me in one line that it's ready and that the session needs a restart.
 ```
 
-Агент всё сделает сам. После этого перезапустите его — навыки читаются при старте.
+The agent does the rest. Then restart it — skills are loaded at startup.
 
-Это команда для **первой** установки. Обновлять потом — [другой командой](#обновление-и-удаление).
+This command is for the **first** install. Updating later is [a different command](#updating-and-removing).
 
-### Через терминал
+### From the terminal
 
-Скопируйте строку:
+Copy this line:
 
 ```bash
 npx skills add nick-vels/skills
 ```
 
-Установщик спросит, какие навыки поставить и для каких агентов — просто подтвердите.
+The installer asks which skills to install and for which agents — just confirm.
 
 <details>
-<summary>Установка одной командой, без вопросов</summary>
+<summary>One-line install, no questions</summary>
 
 ```bash
 npx skills add nick-vels/skills --skill autopilot -a claude-code -g -y
 ```
 
-| Флаг | Что делает |
-|------|------------|
-| `--skill autopilot` | Ставит только Autopilot |
-| `-a claude-code` | Ставит для Claude Code |
-| `-g` | Глобально — навык доступен во всех проектах |
-| `-y` | Не задавать вопросов |
+| Flag | What it does |
+|------|--------------|
+| `--skill autopilot` | Installs only Autopilot |
+| `-a claude-code` | Installs for Claude Code |
+| `-g` | Globally — the skill is available in every project |
+| `-y` | Don't ask questions |
 
-Без `-g` навык встанет только в текущую папку проекта.
+Without `-g` the skill is installed into the current project folder only.
 
 </details>
 
-**Требуется:** [Node.js](https://nodejs.org) (для `npx`) и любой поддерживаемый AI-агент — Claude Code, Cursor, Codex и [70+ других](https://github.com/vercel-labs/skills#supported-agents). Больше ничего.
+**Requires:** [Node.js](https://nodejs.org) (for `npx`) and any supported AI agent — Claude Code, Cursor, Codex and [70+ others](https://github.com/vercel-labs/skills#supported-agents). Nothing else.
 
 ---
 
-## Как пользоваться
+## How to use it
 
-Откройте агента в папке будущего проекта и напишите:
+Open your agent in the folder of the future project and type:
 
 ```
-/autopilot Хочу телеграм-бота, который принимает заявки на ремонт техники
-и складывает их в Google-таблицу
+/autopilot I want a Telegram bot that takes repair requests for appliances
+and puts them into a Google Sheet
 ```
 
-Autopilot включается **только этой командой**. Сам он не стартует, даже если вы написали «собери под ключ»: он создаёт репозиторий, пишет код и коммитит, и такое должно начинаться только по вашему слову.
+Autopilot starts **only on this command**. It never starts by itself, even if you write "just build it": it creates a repository, writes code and commits, and that should only begin when you say so.
 
-**Если задача большая — напишите её в файл.** В одну строку чата подробное описание не помещается, а мельчить не надо: чем больше вы расскажете, тем меньше придётся додумывать за вас. Создайте рядом с проектом файл — название любое, `brief.md`, `идея.txt`, `задача.md` — и опишите там всё в свободной форме: что за проект, для кого, что должно уметь, что вам не нравится у конкурентов, какие есть ограничения по деньгам и срокам. Потом просто укажите на него:
+**If the task is big, put it in a file.** A detailed description doesn't fit in one chat line, and you shouldn't cut it short: the more you tell, the less has to be guessed for you. Create a file next to the project — any name, `brief.md`, `idea.txt`, `task.md` — and describe everything in free form: what the project is, who it's for, what it must do, what you dislike about competitors, any budget and deadline constraints. Then just point to it:
 
 ```
 /autopilot brief.md
 ```
 
 ```
-/autopilot deep docs/идея.md только без оплаты картой
+/autopilot deep docs/idea.md but no card payments
 ```
 
-Агент прочитает файл и возьмёт его содержимое как задачу; ваш файл при этом останется нетронутым, а его копия ляжет в `.autopilot/` — именно с ней в конце сверяется результат. Слова, дописанные рядом с путём, идут в ту же задачу.
+The agent reads the file and takes its contents as the task; your file stays untouched, and a copy goes into `.autopilot/` — that copy is what the result is checked against at the end. Words written after the path are added to the same task.
 
-Дальше нужно будет только ответить на несколько вопросов в самом начале.
+After that, all you do is answer a few questions at the very beginning.
 
-В ответ агент первым делом скажет, в каком режиме работает и какие есть ещё, и **сам откроет дашборд** — так что помнить команды и искать файлы не нужно:
+The agent's first reply tells you which mode it's in and what other modes there are, and **it opens the dashboard itself** — no commands to remember, no files to look for:
 
 ```
-Режим: полуавтомат · глубина: обычная — спрошу только то, что в задаче не определено, дальше соберу сам.
-Дашборд открыл — обновляется сам: http://localhost:52814/dashboard.html
-Память проекта — AGENTS.md (+ CLAUDE.md со ссылкой).
+Mode: semi-auto · depth: normal — I'll only ask what the task leaves undecided, then build the rest myself.
+Dashboard is open and refreshes itself: http://localhost:52814/dashboard.html
+Project memory — AGENTS.md (+ CLAUDE.md pointing to it).
 
-Можно переключить в любой момент, просто скажи:
-• «полный автомат» — не спрашиваю вообще ничего
-• «режим интервью» — разберу задачу вопросами до конца, дальше соберу сам
-• «ручной режим» — то же плюс согласуешь спецификацию и список тасков
-• «строго по брифу» / «проработай глубоко» — меньше или больше проработки сверх сказанного
+You can switch at any time, just say:
+• "fully automatic" — I ask nothing at all
+• "interview me" — I go through the task with questions to the end, then build it myself
+• "approve every step" — the same, plus you approve the spec and the task list
+• "strictly as written" / "go deep" — less or more elaboration beyond what you said
 ```
 
-Вопросы приходят **раундами**: несколько сразу, пронумерованные, у каждого — ответ, который агент выбрал бы сам. Согласны со всем — отвечаете «ок», не согласны с одним — «2 — таблица, остальное ок».
+Questions come in **rounds**: several at once, numbered, each with the answer the agent would pick itself. Agree with all — reply "ok"; disagree with one — "2 — a spreadsheet, the rest ok".
 
 ---
 
-## Четыре режима
+## Four modes
 
-После `/autopilot` можно дописать, насколько плотно вы хотите участвовать. Ничего не написали — работает **полуавтомат**.
+After `/autopilot` you can add how closely you want to be involved. Add nothing — you get **semi-auto**.
 
-| Режим | Как включить | Что спрашивают у вас |
+| Mode | How to turn it on | What you're asked |
 |---|---|---|
-| **Полный автомат** | `/autopilot full ...` или «полный автомат» | Ничего. В конце — список решений, принятых за вас |
-| **Полуавтомат** *(по умолчанию)* | ничего дописывать не нужно | Только то, что в задаче не определено: обычно один-два раунда вопросов. Всё однозначно — ни одного |
-| **Интервью** | `/autopilot interview ...`, «режим интервью», «погриль меня» | Все развилки до одной, плюс то, где идея может не сработать. Дальше собирает сам |
-| **Ручной** | `/autopilot manual ...` или «ручной режим» | То же, что в интервью, потом ваше «ок» на спецификацию и на список тасков |
+| **Fully automatic** | `/autopilot full ...` or "fully automatic" | Nothing. At the end — a list of decisions made for you |
+| **Semi-auto** *(default)* | nothing to add | Only what the task leaves undecided: usually one or two rounds of questions. If everything is clear — none |
+| **Interview** | `/autopilot interview ...`, "interview me", "ask me everything" | Every fork, plus where the idea might not work. Then it builds on its own |
+| **Manual** | `/autopilot manual ...` or "approve every step" | Same as interview, then your "ok" on the spec and on the task list |
 
 ```
-/autopilot full лендинг для доставки пиццы
+/autopilot full a landing page for pizza delivery
 
-/autopilot Телеграм-бот для записи на маникюр
+/autopilot A Telegram bot for booking manicure appointments
 
-/autopilot manual CRM для автосервиса, хочу сам утвердить спецификацию
+/autopilot manual CRM for a car repair shop, I want to approve the spec myself
 ```
 
-Слова `full`, `semi`, `interview`, `manual` пишутся без дефисов. Режим можно поменять по ходу — «переключись в ручной», применится со следующего этапа.
+The words `full`, `semi`, `interview`, `manual` are written without dashes. You can change the mode along the way — "switch to manual" — it applies from the next stage.
 
-**Что не меняется ни в одном режиме:** агент спросит перед необратимым — публикацией, оплатой, рассылкой, удалением данных. И ни один режим не отключает сверку с вашей изначальной задачей.
+**What no mode changes:** the agent asks before anything irreversible — publishing, payments, messaging people, deleting data. And no mode turns off the check against your original task.
 
 ---
 
-## Глубина проработки
+## Depth
 
-Отдельная ручка, независимая от режима. Режим решает, **сколько у вас спросят**; глубина — **сколько додумают за вас**.
+A separate dial, independent of the mode. The mode decides **how much you're asked**; depth decides **how much is thought through for you**.
 
-| Глубина | Как включить | Что делает агент |
+| Depth | How to turn it on | What the agent does |
 |---|---|---|
-| **Строго** | `/autopilot strict ...` или «строго по брифу», «ничего не добавляй» | Только то, что вы написали. Никаких своих фич — даже хороших. Ошибки и пустые состояния всё равно обрабатываются: без них требование просто не работает |
-| **Обычная** *(по умолчанию)* | ничего дописывать не нужно | Прорабатывает то, где пробел явно испортит результат. Своё добавить может, но с привязкой к вашему требованию |
-| **Максимальная** | `/autopilot deep ...` или «проработай глубоко», «продумай за меня» | Каждое требование прогоняется по полному списку: первый запуск, пустой экран, неверный ввод, отказ, обрыв, рост, права, последствия |
+| **Strict** | `/autopilot strict ...` or "strictly as written" | Only what you wrote. No features of its own — not even good ones. Errors and empty states are still handled: without them a requirement simply doesn't work |
+| **Normal** *(default)* | nothing to add | Works through the gaps that would clearly spoil the result. It may add things of its own, but each tied to one of your requirements |
+| **Maximum** | `/autopilot deep ...` or "go deep", "think it through" | Every requirement goes through the full checklist: first run, empty screen, bad input, failure, dropped connection, growth, permissions, consequences |
 
 ```
-/autopilot strict форма обратной связи, ровно как описал
+/autopilot strict a feedback form, exactly as I described
 
-/autopilot deep интернет-магазин керамики
+/autopilot deep an online ceramics store
 
-/autopilot full deep маркетплейс мастеров
+/autopilot full deep a marketplace for craftspeople
 ```
 
-Порядок слов не важен, оба параметра необязательны. Глубину, как и режим, можно поменять по ходу: «поменьше отсебятины» или «продумай глубже».
+Word order doesn't matter, both settings are optional. Like the mode, depth can be changed along the way: "less improvising" or "think it through more".
 
-**На любой глубине действует одно правило:** всё, что агент добавил от себя, привязано к вашему требованию и попадает в финальный отчёт отдельным списком. Фича, которая ни к чему не привязана, вырезается.
-
----
-
-## Эталон — на что должно быть похоже
-
-Если у вас есть сайты, приложения или тексты, на которые результат должен быть похож, — скажите об этом, когда агент спросит в брифинге. Они лягут в `reference.md` и уйдут тем агентам, которые строят то, что вы будете видеть: интерфейс сразу делается «как там», а не выравнивается потом. Свой вкус агент за ваш не выдаёт — эталон бывает только ваш.
+**One rule holds at every depth:** anything the agent adds on its own is tied to one of your requirements and listed separately in the final report. A feature not tied to anything gets cut.
 
 ---
 
-## Две вещи, которые Autopilot делает иначе
+## Reference — what it should look like
 
-### Ваша задача не теряется по дороге
-
-Обычная проблема сборки «по описанию»: вы надиктовали большой бриф, дальше пошли вопросы, спецификация, таски, код — и на выходе половины из того, что вы просили, просто нет. Не потому что отказались, а потому что на каком-то шаге это перестало упоминаться.
-
-Autopilot первым делом разбирает ваш текст на **пронумерованные требования** и записывает их дословно в файл. Дальше у каждого требования есть статус, и на каждом этапе стоит проверка:
-
-- после спецификации — ни одно требование не осталось без раздела;
-- после разбивки — у каждого требования есть таск, **и у каждого таска есть требование** (это ловит работу, которую никто не заказывал);
-- в конце — **слепая приёмка**: отдельный агент получает только ваш исходный текст и готовый проект, спецификацию ему не дают. Он проверяет результат против ваших слов, а не против пересказа. Если он и трекер расходятся — вы увидите это в отчёте.
-
-**Снять требование может только вы.** Агент вправе предложить отложить — вычеркнуть не вправе. Молчание отменой не считается.
-
-### То, о чём вы не подумали, продумывают за вас
-
-В брифе вы описываете, как всё работает, когда всё хорошо. Вы не описываете, что показать на пустом экране, что будет при обрыве связи, что случится, если нажать «отправить» дважды, и что видит человек в самый первый запуск. Это не упущение — это просто не тот уровень, на котором формулируют задачу.
-
-Продумать это — большая часть ценности Autopilot, и объём этой работы вы задаёте [глубиной](#глубина-проработки). На обычной глубине агент закрывает пробелы, которые явно испортят результат; на максимальной — прогоняет каждое требование по полному списку. Что-то он решит сам (текст ошибки, разумные лимиты), а что-то, где решение действительно ваше, вынесет в вопросы.
-
-На максимальной глубине одно требование из брифа разворачивается в несколько проработанных сценариев — столько, сколько у него реально есть сторон. Это и есть разница между «работает на демо» и «работает».
+If there are sites, apps or texts the result should resemble, say so when the agent asks during the briefing. They go into `reference.md` and are handed to the agents that build what you will see: the interface is made "like that one" from the start, not adjusted afterwards. The agent never passes off its own taste as yours — a reference only ever comes from you.
 
 ---
 
-## Прогресс видно всегда
+## Two things Autopilot does differently
 
-<img src="assets/dash-pane.png" width="260" align="right" alt="Дашборд в узкой панели рядом с чатом">
+### Your task doesn't get lost along the way
 
-`.autopilot/dashboard.html` **открывается сам** в самом начале сборки — искать и запускать ничего не нужно. Если агент умеет показывать страницу внутри своего окна (например, панель в приложении Claude), дашборд откроется там, и всё останется в одном окне; иначе — во внешнем браузере. В узкой панели рядом с чатом он становится плотнее: те же блоки, но без гигантских цифр. Работает офлайн. Пока сборка идёт, страница сама подтягивает свежие цифры каждые десять секунд — не перезагружаясь, так что место на странице и выделенный текст не теряются; стрелка ⟳ вверху обновляет сразу. Рядом — переключатели темы (светлая / тёмная) и языка (RU / EN); пока тему не трогали, дашборд следует за системной.
+The usual problem with building "from a description": you dictate a big brief, then come questions, a spec, tasks, code — and at the end half of what you asked for just isn't there. Not because anyone refused, but because at some step it stopped being mentioned.
 
-**Шапка — что происходит одной фразой.** Синяя: сборка работает — «Сдано 2 таска из 6, ещё 3 в работе», какие таски пишутся, какие на проверке, и сколько осталось до сдачи вместе с ревью и приёмкой. Оранжевая: **сборка ждёт вас** — вопросы брифинга, «ок» на спецификацию в ручном режиме, решение перед необратимым шагом; вкладка браузера тоже говорит «● Ждём ответа», а часы сборки в это время стоят. Зелёная: сдано — что теперь есть и что нужно от вас, чтобы запустить по-настоящему. Под фразой — восемь этапов от подготовки до приёмки: пройденные, текущий, пропущенные.
+Autopilot's first move is to split your text into **numbered requirements** and write them down word for word. From then on each requirement has a status, and every stage has a check:
 
-**Ход сборки — у каждого состояния свой цвет.** Зелёный — таск сдан, оранжевый в полоску — пишется, бирюзовый — на проверке, фиолетовый — вернулся с ревью в ремонт, красный — не собрался, пунктир — ждёт своей очереди. Под полосой ремонта или проверки написано, почему. Таски сгруппированы по волнам: видно, что летит параллельно и чего ждёт следующая волна.
+- after the spec — no requirement is left without a section;
+- after the split — every requirement has a task, **and every task has a requirement** (this catches work nobody ordered);
+- at the end — **blind acceptance**: a separate agent gets only your original text and the finished project, not the spec. It checks the result against your words, not against a retelling. If it and the tracker disagree, you'll see that in the report.
 
-**Твои слова.** Каждое требование из брифа — вашей цитатой и с тем, что с ним стало: сделано, в работе, нужны ваши данные, отложено, снято вами. У отложенного и заглушки — причина. Это главное обещание Autopilot — ничего не пропадёт тихо, — и здесь его можно проверить глазами.
+**Only you can drop a requirement.** The agent may suggest deferring one — it may not strike it out. Silence doesn't count as cancelling.
 
-| Блок | Что показывает |
+### What you didn't think of is thought through for you
+
+In a brief you describe how things work when everything goes well. You don't describe what to show on an empty screen, what happens when the connection drops, what happens if someone presses "send" twice, or what a person sees on the very first run. That's not an oversight — it's just not the level at which people describe a task.
+
+Thinking this through is a large part of Autopilot's value, and you set how much of it happens with [depth](#depth). At normal depth the agent closes the gaps that would clearly spoil the result; at maximum depth it runs every requirement through the full checklist. Some things it decides itself (an error message, sensible limits); where the decision really is yours, it turns it into a question.
+
+At maximum depth one requirement from the brief unfolds into several worked-out scenarios — as many as it really has sides. That's the difference between "works in the demo" and "works".
+
+---
+
+## Progress is always visible
+
+<img src="assets/dash-pane.png" width="260" align="right" alt="The dashboard in a narrow pane next to the chat">
+
+`.autopilot/dashboard.html` **opens by itself** at the very start of the build — nothing to find or launch. If the agent can show a page inside its own window (for example, the side pane in the Claude app), the dashboard opens there and everything stays in one window; otherwise in your browser. In a narrow pane next to the chat it gets denser: the same blocks, without the giant numbers. Works offline. While the build runs, the page pulls fresh numbers every ten seconds — without reloading, so your scroll position and selected text stay put; the ⟳ arrow at the top refreshes at once. Next to it are the theme (light / dark) and language (RU / EN) switches; until you touch the theme, the dashboard follows your system.
+
+**The header — what's happening, in one sentence.** Blue: the build is running — "2 of 6 tickets done, 3 more in progress", which tickets are being written, which are in review, and how long until done including review and acceptance. Orange: **the build is waiting for you** — briefing questions, your "ok" on the spec in manual mode, a decision before an irreversible step; the browser tab says "● Waiting for you", and the build clock is stopped meanwhile. Green: done — what you now have and what you need to do to run it for real. Under the sentence — eight stages from preflight to acceptance: passed, current, skipped.
+
+**Build progress — every state has its own colour.** Green — task done, striped orange — being written, teal — in review, purple — back from review for repair, red — failed, dashed — waiting its turn. Under a repair or review bar it says why. Tasks are grouped into waves: you can see what runs in parallel and what the next wave is waiting for.
+
+**Your words.** Every requirement from the brief — as your quote, with what became of it: done, in progress, needs your data, deferred, dropped by you. Deferred items and placeholders show the reason. This is Autopilot's main promise — nothing disappears quietly — and here you can check it with your own eyes.
+
+| Block | What it shows |
 |---|---|
-| **Требования** | Сколько ваших требований закрыто. Задачи бывают готовы на 100 %, а бриф — на 70 % |
-| **Проверки G1–G4** | Бриф разобран до конца · спецификация ничего не потеряла · каждое требование в таске · слепая приёмка. Галочка ставится, когда проверка прошла |
-| **Лента** | Последние события словами: таск сдан, ушёл на проверку, вернулся в ремонт, план сошёлся. Лучший ответ на «оно живо?» |
-| **Понадобится от тебя** | Ключи для `.env`, заглушки на месте ваших данных, решения, принятые за вас |
-| **Тесты и время** | Сколько тестов зелёные; рабочее время без простоев и без ожидания вашего ответа |
-| **В отчёте** | Слепая приёмка и её расхождения, открытые вопросы, замечания ревью с адресом в коде |
+| **Requirements** | How many of your requirements are closed. Tasks can be 100 % done while the brief is at 70 % |
+| **Checks G1–G4** | The brief is fully read · the spec lost nothing · every requirement is in a task · blind acceptance. A check gets its tick when it passes |
+| **Feed** | The latest events in words: task done, sent to review, back for repair, the plan adds up. The best answer to "is it alive?" |
+| **Needed from you** | Keys for `.env`, placeholders standing in for your data, decisions made for you |
+| **Tests and time** | How many tests are green; working time without idle time and without waiting for your answer |
+| **In the report** | Blind acceptance and its disagreements, open questions, review notes with their place in the code |
 
-Даже когда проект небольшой и собирается одним таском, дашборд заполнен так же: этапы, требования, тесты, коммит и заглушки. Если сессия оборвалась — напишите `/autopilot` без слов, агент поднимет состояние из файлов и продолжит с того места, где остановился.
+Even when the project is small and built as a single task, the dashboard is filled the same way: stages, requirements, tests, commit and placeholders. If the session drops, type `/autopilot` with no words — the agent restores the state from files and picks up where it left off.
 
 ---
 
-## Проект помнит себя сам
+## The project remembers itself
 
-Обычная беда второй сессии: агент открывает готовый проект и полчаса разбирается, что тут вообще построено, — за ваши же деньги. Autopilot закрывает это файлом описания проекта в корне — `AGENTS.md`.
+The usual trouble with the second session: the agent opens a finished project and spends half an hour figuring out what was built here — on your money. Autopilot fixes that with a project description file at the root — `AGENTS.md`.
 
-Файл появляется **сразу**, ещё до первой строчки кода: название, команды запуска. Дальше туда попадает только то, что реально выяснилось по ходу — настоящая команда проверки, грабли, на которые уже наступили, новая переменная окружения. А в самом конце отдельный агент читает **готовый код** (не спецификацию — иначе описание рассказывало бы про планы) и пишет указатели: как запустить, где что лежит, где больно. У большого проекта архитектура уходит в `docs/architecture.md`, а решения с причинами — в `docs/adr/`.
+The file appears **right away**, before the first line of code: the name, the run commands. After that only what was actually learned along the way goes in — the real check command, pitfalls already stepped on, a new environment variable. At the very end a separate agent reads the **finished code** (not the spec — otherwise the description would talk about plans) and writes pointers: how to run it, where things live, where it hurts. For a big project the architecture goes into `docs/architecture.md`, and decisions with their reasons into `docs/adr/`.
 
 | | |
 |---|---|
-| Какой файл | `AGENTS.md` — его читают Claude Code, Codex, Cursor и другие агенты. Рядом ложится `CLAUDE.md` с одной строкой `@AGENTS.md`: без него Claude Code пропустит `AGENTS.md`, если где-то выше по папкам лежит другой `CLAUDE.md` |
-| У вас уже есть свой `CLAUDE.md` или `AGENTS.md` | Autopilot его **не трогает**. В конце он предложит, что дописать — новые команды, переменные, грабли, — и спросит, применить ли. В полном автомате предложение просто останется файлом |
-| Объём | По размеру проекта и коротко: каждая строка этого файла читается в каждой следующей сессии |
-| Ваш текст | Всё, что написали вы, — неприкосновенно. Autopilot пишет только внутри своих меток |
+| Which file | `AGENTS.md` — read by Claude Code, Codex, Cursor and other agents. Next to it goes a `CLAUDE.md` with a single line `@AGENTS.md`: without it Claude Code skips `AGENTS.md` if there's another `CLAUDE.md` somewhere up the folder tree |
+| You already have your own `CLAUDE.md` or `AGENTS.md` | Autopilot **doesn't touch it**. At the end it suggests what to add — new commands, variables, pitfalls — and asks whether to apply it. In fully automatic mode the suggestion just stays as a file |
+| Size | Proportional to the project, and short: every line of this file is read in every future session |
+| Your text | Everything you wrote is untouchable. Autopilot writes only inside its own markers |
 
 ---
 
-## Как это работает
+## How it works
 
-Главный принцип: **порядок и есть продукт**. Код пишется в предпоследней фазе, всё до неё — выяснение, что именно строить, всё после — доказательство, что построили именно это.
+The main principle: **the order is the product**. Code is written in the second-to-last phase; everything before it is finding out what exactly to build, everything after is proving that's what got built.
 
-| Фаза | Что происходит |
+| Phase | What happens |
 |---|---|
-| **Подготовка** | Настройка папки проекта, `.gitignore`, приборы — дашборд открывается сразу |
-| **Требования** | Ваш текст → пронумерованные требования, дословно |
-| **Брифинг** | Вопросы раундами и только по реальным развилкам; первыми — те, без ответа на которые проект не собрать: оплата, хостинг, доступы |
-| **Спецификация** | Требования разворачиваются в проработанные сценарии |
-| **План** | Спецификация режется на таски — или не режется, если задача небольшая — и раскладывается на волны: что можно собирать одновременно, а что только по очереди |
-| **Разработка** | Один таск = один отдельный агент с чистой памятью, один коммит; независимые таски идут параллельно |
-| **Код-ревью** | Фундамент и рискованные таски (вход, деньги, удаление данных) проверяются до коммита; в конце — вся сборка целиком: соответствие брифу и спецификации, качество кода, безопасность |
-| **Приёмка** | Отдельный агент ставит проект с нуля в чистой копии, запускает и сверяет результат с вашей изначальной задачей; описание проекта на будущее; отчёт |
+| **Preflight** | Project folder setup, `.gitignore`, instruments — the dashboard opens right away |
+| **Requirements** | Your text → numbered requirements, word for word |
+| **Briefing** | Questions in rounds, only on real forks; first come the ones the project can't be built without: payments, hosting, access |
+| **Spec** | Requirements unfold into worked-out scenarios |
+| **Plan** | The spec is cut into tasks — or not, if the job is small — and laid out in waves: what can be built at the same time, and what only in order |
+| **Development** | One task = one separate agent with a clean memory, one commit; independent tasks run in parallel |
+| **Code review** | The foundation and risky tasks (sign-in, money, deleting data) are checked before commit; at the end — the whole build: match with the brief and the spec, code quality, security |
+| **Acceptance** | A separate agent installs the project from scratch in a clean copy, runs it and checks the result against your original task; the project description for the future; the report |
 
-### Про нарезку на таски
+### On splitting into tasks
 
-Каждый таск — это отдельный агент, который заново въезжает в проект: читает контракты, изучает код, разбирается со стеком. Это стоит дорого. Поэтому Autopilot режет по ярусам, а не «чем мельче, тем надёжнее»:
+Every task is a separate agent that has to get into the project from scratch: read the contracts, study the code, figure out the stack. That's expensive. So Autopilot splits by tiers, not by "the smaller, the safer":
 
-| Задача | Сколько тасков |
+| Job | How many tasks |
 |---|---|
-| Небольшая — лендинг, форма, скрипт | **один.** Собирается за один заход одним агентом |
-| Одна связная фича | 2–3 |
-| Несколько фич или слоёв | 4–8 |
-| Несколько независимых подсистем | 9–16 |
+| Small — a landing page, a form, a script | **one.** Built in one pass by one agent |
+| One coherent feature | 2–3 |
+| Several features or layers | 4–8 |
+| Several independent subsystems | 9–16 |
 
-Больше 16 — запрещено: работа разбивается на два запуска. Мелкая нарезка не покупает надёжность, она покупает расход.
+More than 16 is not allowed: the work is split into two runs. Fine-grained splitting doesn't buy reliability, it buys spend.
 
-### Про разработку
+### On development
 
-| Что делает Autopilot | Зачем |
+| What Autopilot does | Why |
 |---|---|
-| Каждый таск выполняет отдельный агент | Не путается в накопившемся контексте и не ломает то, что работало |
-| Передаёт следующему агенту контракты предыдущих | Иначе шестая задача заново изобретёт то, что построила третья |
-| Независимые таски идут параллельно, по нескольку агентов сразу | Ждать по очереди то, что не зависит друг от друга, — это часы на пустом месте |
-| Один коммит на таск | Ваши точки отката |
-| Таски с общими файлами идут по очереди | Иначе два агента перезапишут работу друг друга |
-| Полный прогон проверки после каждого таска — тесты, типы, линтер | Регрессия стоит минуты, а не вечер |
-| Рутинные таски — на модели попроще, фундамент и рискованные — на сильной | Платите за сильную модель там, где она что-то меняет |
-| Ревью — точечно и в конце, а не после каждого таска | Раньше ревью съедало до половины расхода; дефекты, ради которых стоит держать таск, живут в фундаменте и рискованных местах |
-| Правки после ревью делает тот же агент, который писал код | Он помнит, почему код такой; чужой чинит симптом и ломает причину |
-| Главный диалог не пишет код вообще — только раздаёт и сверяет | Его контекст один на весь запуск и не обновляется: каждый дифф, прочитанный на втором таске, мешает на восьмом |
-| Упавший таск — повтор, потом попытка другим способом | Если и она не прошла, агент останавливается и объясняет по-человечески |
-| План, который разошёлся с кодом, исправляется вслух | Если по ходу выяснилось, что задуманное не работает, агент правит план и говорит вам одной строкой — а не строит молча что-то другое |
+| Each task is done by a separate agent | It doesn't get confused by accumulated context and doesn't break what worked |
+| Passes the contracts of earlier tasks to the next agent | Otherwise task six reinvents what task three built |
+| Independent tasks run in parallel, several agents at once | Waiting in line for things that don't depend on each other is hours wasted |
+| One commit per task | Your rollback points |
+| Tasks sharing files run one after another | Otherwise two agents overwrite each other's work |
+| A full check after every task — tests, types, linter | A regression costs a minute, not an evening |
+| Routine tasks go to a cheaper model, the foundation and risky ones to a strong one | You pay for the strong model where it makes a difference |
+| Review is targeted and at the end, not after every task | Review used to eat up to half the spend; the defects worth holding a task for live in the foundation and the risky parts |
+| Fixes after review are made by the same agent that wrote the code | It remembers why the code is the way it is; someone else fixes the symptom and breaks the cause |
+| The main conversation writes no code at all — it only hands out work and checks it | Its context is one for the whole run and never refreshes: every diff read on task two gets in the way on task eight |
+| A failed task — a retry, then an attempt another way | If that fails too, the agent stops and explains in plain words |
+| A plan that diverged from the code is corrected out loud | If it turns out along the way that the plan doesn't work, the agent fixes the plan and tells you in one line — instead of quietly building something else |
 
 ---
 
-## Когда использовать, а когда нет
+## When to use it, and when not
 
-**Подходит, если:**
+**A good fit if:**
 
-- вы описываете, что нужно, и ждёте готовый результат;
-- вы не программист и не будете читать спецификации и код;
-- «собери под ключ», «just build it», «не задавай лишних вопросов»;
-- вы хотите утвердить спецификацию и список тасков, но не возиться с процессом — это ручной режим.
+- you describe what you need and expect a finished result;
+- you're not a programmer and won't read specs and code;
+- "just build it", "build it end to end", "don't ask unnecessary questions";
+- you want to approve the spec and the task list but not deal with the process — that's manual mode.
 
-**Не подходит, если:**
+**Not a fit if:**
 
-| Ситуация | Что делать вместо |
+| Situation | What to do instead |
 |---|---|
-| Хотите писать код вместе, строчка за строчкой | Работайте с агентом напрямую |
-| Задача — правка в одном файле | Просто попросите её сделать |
-| Идея больше одного проекта, конечная цель неясна | Сначала определитесь с целью |
+| You want to write code together, line by line | Work with the agent directly |
+| The task is an edit in one file | Just ask for it |
+| The idea is bigger than one project and the end goal is unclear | Settle on the goal first |
 
 ---
 
-## Ключи, пароли и доступы
+## Keys, passwords and access
 
-Autopilot **никогда не спрашивает ключи, токены и пароли** — только каким сервисом вы хотите пользоваться и есть ли у вас там аккаунт.
+Autopilot **never asks for keys, tokens or passwords** — only which service you want to use and whether you have an account there.
 
-- вопрос будет «принимаем оплату через Stripe или ЮKassa?», а не «пришлите ключ»;
-- в коде появится имя переменной — `STRIPE_SECRET_KEY`, значение вы вписываете в `.env` сами;
-- `.env` сразу в `.gitignore`;
-- в отчёте — список переменных, которые осталось заполнить, именами без значений.
+- the question will be "do we take payments via Stripe or PayPal?", not "send me the key";
+- the code gets a variable name — `STRIPE_SECRET_KEY`, and you put the value into `.env` yourself;
+- `.env` goes into `.gitignore` right away;
+- the report lists the variables still to fill in, by name, without values.
 
-Если вы всё-таки пришлёте ключ в чат, он **не попадёт ни в один файл**: перед записью весь ваш текст проходит через фильтр, который распознаёт ключи Stripe, GitHub, AWS, Google, Slack, токены Telegram, JWT и строки подключения. Вместо значения в файл уйдёт `[REDACTED:STRIPE_SECRET_KEY]`, а вам придёт предупреждение — ключ, побывавший в переписке, стоит отозвать и выпустить новый.
-
----
-
-## Чего Autopilot не делает никогда
-
-- не пишет код до того, как появилась спецификация;
-- не вычёркивает ваши требования — только вы;
-- не выдумывает факты о вас: цены, тексты и адреса останутся видимыми заглушками, а не правдоподобной ложью;
-- не просит вас проверять задачи, их размер или код;
-- не запускает две задачи в одной памяти агента;
-- не оставляет оплату, доступы и хостинг на финиш;
-- не просит и не сохраняет ваши ключи и пароли;
-- ничего не устанавливает и не скачивает без вашего ведома.
+If you do send a key in the chat, it **won't end up in any file**: before anything is written, all your text goes through a filter that recognises Stripe, GitHub, AWS, Google and Slack keys, Telegram tokens, JWTs and connection strings. The file gets `[REDACTED:STRIPE_SECRET_KEY]` instead of the value, and you get a warning — a key that has been in a chat should be revoked and reissued.
 
 ---
 
-## Обновление и удаление
+## What Autopilot never does
 
-**Обновляет только `update`.** Не переустанавливайте навык командой из раздела «Установка» — она для первой установки; для обновления есть отдельная команда:
+- writes code before there is a spec;
+- strikes out your requirements — only you can;
+- makes up facts about you: prices, texts and addresses stay visible placeholders, not plausible lies;
+- asks you to check tasks, their size or the code;
+- runs two tasks in one agent's memory;
+- leaves payments, access and hosting for the finish;
+- asks for or stores your keys and passwords;
+- installs or downloads anything without your knowledge.
+
+---
+
+## Updating and removing
+
+**Only `update` updates.** Don't reinstall the skill with the command from "Installation" — that one is for the first install; updating has its own command:
 
 ```bash
 npx skills update autopilot -g
 ```
 
-Флаг `-g` — если навык ставился глобально. Для проектной установки запустите команду без флага в папке того проекта.
+The `-g` flag is for a global install. For a project install, run the command without the flag in that project's folder.
 
-Не хотите открывать терминал — вставьте агенту:
+If you'd rather not open a terminal, paste this to your agent:
 
 ```
-Обнови навык Autopilot до последней версии. Выполни в терминале:
+Update the Autopilot skill to the latest version. Run in the terminal:
 
 npx skills update autopilot -g
 
-Если он ответит, что всё уже обновлено, а версия при этом старая — переустанови:
-npx skills remove autopilot -g -y && npx skills add nick-vels/skills --skill autopilot -g -y -a <подставь себя: claude-code, cursor, codex>
+If it says everything is up to date but the version is still old, reinstall:
+npx skills remove autopilot -g -y && npx skills add nick-vels/skills --skill autopilot -g -y -a <put yourself here: claude-code, cursor, codex>
 
-Когда закончишь — напиши одной строкой, что обновилось, и напомни перезапустить сессию.
+When you're done, tell me in one line what was updated and remind me to restart the session.
 ```
 
-Посмотреть, что установлено, и удалить:
+See what's installed, and remove:
 
 ```bash
 npx skills list
@@ -367,62 +369,62 @@ npx skills list
 npx skills remove autopilot -g
 ```
 
-**Если навык ведёт себя как старая версия.** `update` сверяет версию источника, а не файлы на диске: если локальную копию правили или она побилась, он ответит «всё уже обновлено» и ничего не сделает. Лечится переустановкой:
+**If the skill behaves like an old version.** `update` compares the source version, not the files on disk: if the local copy was edited or got corrupted, it says "everything is up to date" and does nothing. The fix is a reinstall:
 
 ```bash
 npx skills remove autopilot -g -y && npx skills add nick-vels/skills --skill autopilot -g -y -a claude-code
 ```
 
-Чтобы агент увидел новую версию, **перезапустите сессию** — навыки читаются при старте.
+For the agent to see the new version, **restart the session** — skills are loaded at startup.
 
-### Как узнать, что вышла новая версия
+### How to know a new version is out
 
-В начале каждой сборки Autopilot сверяет свою версию с этим репозиторием и, если вышла новая, пишет одной строкой, что обновиться и какой командой. Что изменилось — в [CHANGELOG.md](CHANGELOG.md). Посреди сборки навык не обновляется никогда.
+At the start of every build Autopilot compares its version with this repository and, if a new one is out, tells you in one line, with the command to update. What changed is in [CHANGELOG.md](CHANGELOG.md). The skill never updates in the middle of a build.
 
-Проверка — один запрос к GitHub за сборку, без передачи каких-либо данных; без интернета она молчит. Выключить: переменная окружения `AUTOPILOT_NO_UPDATE_CHECK=1`.
+The check is one request to GitHub per build, sending no data at all; without internet it stays silent. To turn it off: the environment variable `AUTOPILOT_NO_UPDATE_CHECK=1`.
 
 ---
 
-## Что внутри репозитория
+## What's in the repository
 
 ```
 skills/autopilot/
-├── SKILL.md                    ← оркестратор: порядок фаз, гейты, правила, которые не нарушаются
-├── phases/                    ← правила фаз, читаются по одной, в момент фазы
-│   ├── 0-modes.md              режимы и глубина, стартовое сообщение
-│   ├── 0-preflight.md          подготовка репозитория
-│   ├── 0-resume.md             продолжение прерванной сборки
-│   ├── 0-instruments.md        дашборд: запуск и одна команда на каждое событие
-│   ├── 0-memory.md             выбрать файл памяти проекта
-│   ├── 1-manifest.md           бриф → требования, фильтр секретов
-│   ├── 2-briefing.md           вопросы раундами, эталон
-│   ├── 2-adversarial.md        где идея может не сработать — в интервью и на глубокой проработке
-│   ├── 3-spec.md               спецификация и проработка глубины
-│   ├── 4-plan.md               разбивка на таски, ярусы, волны, кому ревью и какая модель
-│   ├── 5-subagents.md          агенты-исполнители и контракты между ними
-│   ├── 5-repair.md             ремонт и отказ — только когда таск вернулся не чистым
-│   ├── 6-review.md             точечное ревью и ревью всей сборки
-│   ├── 8-final.md              слепая приёмка и отчёт
-│   ├── 9-memory.md             описание проекта и решения
-│   ├── rationalizations.md     отговорки и красные флаги — проверка, а не инструкция
-│   └── dashboard-template.html готовый дашборд с вшитым логотипом
-├── prompts/                   ← материал для субагентов, не для оркестратора
-│   ├── executor.md             как писать код и тесты, что вернуть
-│   └── review.md               по чему судит ревьюер: три оси и безопасность
+├── SKILL.md                    ← orchestrator: phase order, gates, rules that are never broken
+├── phases/                    ← phase rules, read one at a time, when the phase begins
+│   ├── 0-modes.md              modes and depth, the opening message
+│   ├── 0-preflight.md          repository setup
+│   ├── 0-resume.md             resuming an interrupted build
+│   ├── 0-instruments.md        dashboard: launch, and one command per event
+│   ├── 0-memory.md             choosing the project memory file
+│   ├── 1-manifest.md           brief → requirements, secrets filter
+│   ├── 2-briefing.md           questions in rounds, reference
+│   ├── 2-adversarial.md        where the idea might fail — in interview mode and at maximum depth
+│   ├── 3-spec.md               the spec and how deep to work it out
+│   ├── 4-plan.md               splitting into tasks, tiers, waves, who gets review and which model
+│   ├── 5-subagents.md          executor agents and the contracts between them
+│   ├── 5-repair.md             repair and failure — only when a task came back not clean
+│   ├── 6-review.md             targeted review and the review of the whole build
+│   ├── 8-final.md              blind acceptance and the report
+│   ├── 9-memory.md             the project description and decisions
+│   ├── rationalizations.md     excuses and red flags — a check, not an instruction
+│   └── dashboard-template.html the ready-made dashboard with the logo built in
+├── prompts/                   ← material for subagents, not for the orchestrator
+│   ├── executor.md             how to write code and tests, what to return
+│   └── review.md               what the reviewer judges by: three axes and security
 └── tools/
-    └── ap.py                   учёт сборки: состояние, дашборд, сервер — одна команда на событие
+    └── ap.py                   build bookkeeping: state, dashboard, server — one command per event
 
-docs/autopilot/design.md         ← почему устроено именно так, с замерами
-tools/measure-run.py             ← замер реального прогона по логам Claude Code
-CHANGELOG.md                     ← что нового по версиям
+docs/autopilot/design.md         ← why it's built this way, with measurements
+tools/measure-run.py             ← measuring a real run from Claude Code logs
+CHANGELOG.md                     ← what's new, by version
 ```
 
-Файлы `phases/` читаются агентом по одному, только когда начинается соответствующая фаза, — поэтому в памяти всегда лежит ровно то, что нужно сейчас. Всё, что нужно лишь в редком случае, — ремонт, продолжение, разбор идеи на прочность, — вынесено в отдельные файлы и не открывается, пока случай не наступил. Обоснования решений живут в `docs/`, а не в инструкциях: агенту они не нужны, а платить за них пришлось бы на каждом шаге.
+The agent reads the `phases/` files one at a time, only when the matching phase begins — so its memory always holds exactly what's needed right now. Everything needed only in rare cases — repair, resuming, stress-testing the idea — lives in separate files and isn't opened until that case comes up. The reasons behind the decisions live in `docs/`, not in the instructions: the agent doesn't need them, and paying for them would happen at every step.
 
-Всё это обычный markdown. Можно открыть и прочитать: [skills/autopilot/SKILL.md](skills/autopilot/SKILL.md).
+It's all plain markdown. You can open it and read it: [skills/autopilot/SKILL.md](skills/autopilot/SKILL.md).
 
 ---
 
-## Лицензия
+## License
 
-[MIT](LICENSE) © Nick Vels — можно использовать, изменять и распространять, в том числе в коммерческих проектах.
+[MIT](LICENSE) © Nick Vels — you may use, modify and distribute it, including in commercial projects.

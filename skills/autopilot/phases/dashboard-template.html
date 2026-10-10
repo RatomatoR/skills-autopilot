@@ -397,7 +397,7 @@ const plural = (n, one, few, many) => {
   return many;
 };
 const en = (n, one, many) => n === 1 ? one : many;
-const q = s => `«${s}»`;
+const q = (s, lang) => lang === 'en' ? `“${s}”` : `«${s}»`;
 
 const I18N = {
   ru:{lang:"ru",of:"из",
@@ -932,7 +932,7 @@ function render(lang){
     : `${fmtDur(eta[0])} — ${fmtDur(eta[1])}`) : '';
 
   // ——— шапка ———
-  const names = list => list.map(t => q(esc(t.title))).join(', ');
+  const names = list => list.map(t => q(esc(t.title), L.lang)).join(', ');
   let heroCls = '', stateLine, h2, lead = '', big = '', bigSub = '', hint = '';
   if (fin) {
     heroCls = 'won';

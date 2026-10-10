@@ -1,70 +1,70 @@
-# Почему Autopilot устроен именно так
+# Why Autopilot is built this way
 
-Страница для людей, которые правят навык. Агент её не читает: в инструкциях осталось правило и, где правило неочевидно, одна строка «почему». Всё, что ниже, — обоснования и замеры, за которые пришлось заплатить.
+A page for people who edit the skill. The agent never reads it: the instructions keep the rule and, where the rule is not obvious, one line of "why". Everything below is the reasoning and the measurements we paid for.
 
-## Главные решения
+## Key decisions
 
-**Манифест дословных цитат и четыре гейта.** Требование, которое «перестало упоминаться» на третьем пересказе, — главная поломка сборки по описанию. Поэтому бриф сразу режется на строки с цитатами, а G2 и G4 проверяет субагент, которому не дают ни манифест, ни спецификацию: автор спецификации не видит того, чего не написал.
+**A manifest of verbatim quotes and four gates.** A requirement that "stopped being mentioned" by the third retelling is the main way a build from a description breaks. So the brief is cut into quoted rows right away, and G2 and G4 are checked by a subagent that gets neither the manifest nor the spec: the spec's author cannot see what they did not write.
 
-**Оркестратор не пишет код.** Его контекст один на весь прогон и не обновляется. Дифф, прочитанный на втором таске, лежит в нём на восьмом.
+**The orchestrator does not write code.** Its context is one for the whole run and is never refreshed. A diff read on task two is still sitting there on task eight.
 
-**Один таск — один исполнитель — один свежий контекст.** Накопленный контекст — то, из-за чего длинные сессии начинают ломать то, что работало.
+**One task, one executor, one fresh context.** Accumulated context is what makes long sessions start breaking things that used to work.
 
-**`interfaces.md` заполняется из спецификации до первого таска.** Иначе границы модулей решает таск 01, видевший восьмую часть задачи, а остальные либо подчиняются, либо тихо строят вторую версию.
+**`interfaces.md` is filled from the spec before the first task.** Otherwise module boundaries are decided by task 01, which saw an eighth of the job, and the rest either obey or quietly build a second version.
 
-**Запуск только по `/autopilot` (`disable-model-invocation`).** Навык делает `git init`, пишет код и коммитит. Описание ловило слишком широкие фразы, и поставленный глобально навык мог стартовать в чужом проекте без команды. Цена — пользователь должен знать команду; README её и показывает.
+**Launch only via `/autopilot` (`disable-model-invocation`).** The skill runs `git init`, writes code and commits. The description matched phrases that were too broad, and a globally installed skill could start in someone else's project without a command. The cost: the user has to know the command, and the README shows it.
 
-**Широкое изменение — три шага, а не вертикальный слайс.** Правка общей вещи, которой пользуются несколько зон, ломает все зоны, кроме своей: таск не зеленеет. «Новое рядом со старым → перевод по зонам → удаление старого» держит каждый шаг зелёным. Путь был в `to-tickets` у Покока и потерялся при переносе.
+**A wide change is three steps, not a vertical slice.** Editing a shared thing used by several zones breaks every zone but its own: the task never goes green. "New next to old → migrate zone by zone → delete the old" keeps every step green. The path came from Pocock's `to-tickets` and got lost in the port.
 
-**Бриф растёт разделом «Дополнения».** Обе независимые проверки читают бриф и не читают манифест. Изменение, дошедшее до манифеста и не дошедшее до брифа, для них не существует.
+**The brief grows an addenda section (`## Дополнения`).** Both independent checks read the brief and do not read the manifest. A change that reached the manifest but not the brief does not exist for them.
 
-## Замеры, на которых стоит версия 2.0
+## Measurements behind version 2.0
 
-Сняты с восьми реальных прогонов по логам Claude Code (сентябрь 2026, `tools/measure-run.py`). Единицы нормированы: вывод ×5, запись в кэш ×1,25, чтение из кэша ×0,1 — это пропорции между прогонами, а не деньги.
+Taken from eight real runs via Claude Code logs (September 2026, `tools/measure-run.py`). Units are normalized: output ×5, cache write ×1.25, cache read ×0.1. These are ratios between runs, not money.
 
-| Прогон | Всего | Ревью + ремонт | Исполнители | Оркестратор |
+| Run | Total | Review + repair | Executors | Orchestrator |
 |---|---|---|---|---|
-| T3, 13 тасков | 162 млн | 41 % | ~39 % | 17 % |
-| T3, 9 тасков | 108 млн | 13 % | 57 % | 26 % |
-| T2, 7 тасков | 29 млн | 26 % | 32 % | 37 % |
-| T3 (две сессии) | 66 / 46 млн | 20 % / 47 % | 44 % / 28 % | 28 % / 18 % |
-| T3 (две сессии) | 35 / 80 млн | 29 % / 45 % | 43 % / 37 % | 28 % / 15 % |
+| T3, 13 tasks | 162M | 41% | ~39% | 17% |
+| T3, 9 tasks | 108M | 13% | 57% | 26% |
+| T2, 7 tasks | 29M | 26% | 32% | 37% |
+| T3 (two sessions) | 66 / 46M | 20% / 47% | 44% / 28% | 28% / 18% |
+| T3 (two sessions) | 35 / 80M | 29% / 45% | 43% / 37% | 28% / 15% |
 
-Что из этого следовало:
+What followed from this:
 
-- **Долгоживущий ревьюер дорог.** Его контекст рос до 300–600 тыс. токенов, а кэш субагента живёт 5 минут — между тасками он остывал, и весь контекст записывался заново по цене записи (55–68 % расхода ревьюера). Отсюда: свежий ревьюер на событие, точечное ревью только фундамента и рискованных тасков, одно ревью всей ветки в конце.
-- **Оркестратор расширял ремонт.** Дозапросы на 12–15 условий при «блокирующего нет», ремонт у 13 из 13 тасков, у 8 — потолок из двух. Отсюда: на ремонт уходят строки `BLOCKING` дословно, а правила цены прогона ломаются только строкой пользователю.
-- **Бухгалтерия — сотни ходов.** До 48 вызовов `sync.py` и ручные правки `state.js` за прогон, каждый ход — перечитывание всего контекста оркестратора. Отсюда: `ap.py`, одна команда на событие, склеиваемая с проверкой и коммитом.
-- **Потолок контекста исполнителя не срабатывал.** Исполнители делали по 100–370 шагов, передача таска случилась один раз примерно на 60 тасков. Механизм снят; вместо него — плотная нарезка.
-- **Доводку не включили ни разу** за восемь прогонов. Режим снят; эталон пользователя теперь уходит исполнителям интерфейсных тасков сразу.
-- **Текст навыка.** Стартовый контекст оркестратора — 188 КБ до правок, около 75 КБ после.
+- **A long-lived reviewer is expensive.** Its context grew to 300–600K tokens, and a subagent's cache lives 5 minutes: it went cold between tasks, and the whole context was rewritten at cache-write price (55–68% of the reviewer's spend). Hence: a fresh reviewer per event, targeted review only for the foundation and risky tasks, one review of the whole branch at the end.
+- **The orchestrator widened repairs.** Follow-up requests carried 12–15 conditions when the review said "nothing blocking"; 13 of 13 tasks got repairs, 8 hit the cap of two. Hence: repair receives the `BLOCKING` lines verbatim, and the run-cost rules can only be broken by a line to the user.
+- **Bookkeeping took hundreds of turns.** Up to 48 `sync.py` calls and manual `state.js` edits per run, each turn re-reading the orchestrator's entire context. Hence: `ap.py`, one command per event, chainable with the check and the commit.
+- **The executor context ceiling never fired.** Executors took 100–370 steps; a task handoff happened once in about 60 tasks. The mechanism is gone; tight slicing replaces it.
+- **The refinement mode was never switched on** in eight runs. The mode is gone; the user's reference now goes straight to the executors of UI tasks.
+- **Skill text.** The orchestrator's starting context was 188 KB before the edits, about 75 KB after.
 
-## Дашборд
+## Dashboard
 
-- **Одна правда — `state.js`, одна вьюха — страница, ноль сборки.** Страница несёт снимок состояния внутри себя (его вписывает `ap.py`), поэтому открывается с данными двойным кликом, из панели как `data:`, через месяц после прогона.
-- **Панель Claude открывает `file://` как `data:`** — из нулевого origin `state.js` не достать никаким способом (проверено 13.08 и 19.08.2026). Поэтому сервер на `127.0.0.1` и навигация по http; `preview_start` перед `navigate`, `localhost` вместо `127.0.0.1`.
-- **Перезагрузка в панели заглушена** (`location.reload()` и `meta refresh` ничего не делают), поэтому страница раз в 10 секунд до-подгружает `state.js?t=…`, а не перезагружается.
-- **Сервер гасится с задержкой 12 секунд** из отдельного процесса: вызов инструмента выполняется раньше текста сообщения, и мгновенное убийство оставляло на экране «в работе» навсегда.
-- **Свой сервер узнаётся только по `-m http.server` и точному `--directory`.** Широкая проверка однажды убила dev-сервер пользователя (`http-server` из npm), общий pid-файл — сервер соседнего прогона. На Windows командные строки берутся из CIM: `ps` там нет, и без этого каждый вызов плодил новый сервер.
-- **Часы считают работу, а не календарь**: промежуток между метками длиннее 45 минут засчитывается как 45. Простои на реальных прогонах были 444, 4207 и 7814 минут, рабочие промежутки укладывались в час.
-- **Метки событий пишет `ap.py`, а не страница** (журнал `beats` в `state.js`). Раньше `updatedAt` перезаписывался, и о прошлых событиях страница знала, только если видела их сама: уснул экран или упал сервер — промежутки между редкими оставшимися метками обрезались как простой, и рабочее время пропадало (отзыв из Codex, 02.10.2026).
-- **Сервер возвращается на прежний порт.** Убитый сервер оставляет порт в TIME_WAIT; проверка без `SO_REUSEADDR` считала его занятым, сервер уезжал на новый порт, и открытая вкладка не оживала уже никогда. Теперь вкладка, опрашивающая старый адрес, подхватывает поднятый сервер сама; две неудачные подгрузки подряд по http — плашка «связь пропала».
-- **Стрелка сверху — «обновить сейчас», не выключатель.** Выключатель автообновления нажимали как «обновить», он молча выключал опрос и запоминал это в `localStorage`.
-- **Цвет — сигнал состояния, а не украшение (2.1).** Первый вариант 2.1 повторял спокойный стиль платформы, и всё сливалось: «нет акцентов — не видно, что происходит» (отзыв пользователя, 08.10.2026). Теперь у каждого состояния один цвет: синий — идёт работа, оранжевый — ждём человека или таск пишется, зелёный — сдано, бирюзовый — проверка, фиолетовый — ремонт, красный — упало.
-- **Ожидание пользователя — отдельное событие (`ask`), а не простой.** Без него часы тикали, пока человек думал над вопросами, и через 45 минут показывали «паузу», похожую на поломку. Интервалы `waits` вычитаются из рабочего времени целиком.
-- **Лента, гейты и цитаты пишет `ap.py`, а не агент.** Каждая лишняя команда агенту — ход с перечитыванием всего контекста; всё, что выводится из уже существующих событий, выводится скриптом.
-- **Узкая панель — основной экран.** Дашборд чаще всего смотрят в панели рядом с чатом (380–900 px), поэтому плотный режим включается уже с 900 px, а не только на телефоне.
-- **Анимация появления — только при первой отрисовке.** Страница переписывает `#app` на каждом событии; анимация на каждом круге мигала бы.
+- **One source of truth (`state.js`), one view (the page), zero build.** The page carries a snapshot of the state inside itself (`ap.py` writes it in), so it opens with data on a double-click, from the panel as `data:`, a month after the run.
+- **The Claude panel opens `file://` as `data:`**: from a null origin there is no way to reach `state.js` (verified 2026-08-13 and 2026-08-19). Hence a server on `127.0.0.1` and navigation over http; `preview_start` before `navigate`, `localhost` instead of `127.0.0.1`.
+- **Reload is disabled in the panel** (`location.reload()` and `meta refresh` do nothing), so every 10 seconds the page re-fetches `state.js?t=…` instead of reloading.
+- **The server is shut down with a 12-second delay** from a separate process: the tool call runs before the message text, and killing it instantly left "in progress" on screen forever.
+- **Our own server is recognized only by `-m http.server` and the exact `--directory`.** A broad check once killed the user's dev server (`http-server` from npm), and a shared pid file killed a neighboring run's server. On Windows, command lines come from CIM: there is no `ps`, and without this every call spawned a new server.
+- **The clock counts work, not calendar time**: a gap between beats longer than 45 minutes counts as 45. Idle gaps on real runs were 444, 4207 and 7814 minutes; working gaps fit within an hour.
+- **Event beats are written by `ap.py`, not the page** (the `beats` log in `state.js`). Previously `updatedAt` was overwritten, and the page knew about past events only if it had seen them itself: if the screen slept or the server died, the gaps between the few remaining beats were cut as idle, and working time was lost (feedback from Codex, 2026-10-02).
+- **The server comes back on the same port.** A killed server leaves the port in TIME_WAIT; a check without `SO_REUSEADDR` saw it as busy, the server moved to a new port, and the open tab never came back to life. Now a tab polling the old address picks up the restarted server by itself; two failed http fetches in a row show a "connection lost" banner.
+- **The arrow at the top is "refresh now", not a toggle.** People clicked the auto-refresh toggle as "refresh"; it silently turned polling off and remembered that in `localStorage`.
+- **Color signals state, not decoration (2.1).** The first 2.1 draft copied the platform's calm style, and everything blended together: "no accents, you can't see what's going on" (user feedback, 2026-10-08). Now each state has one color: blue is work in progress, orange is waiting for the human or a task being written, green is delivered, teal is checking, purple is repair, red is failed.
+- **Waiting for the user is its own event (`ask`), not idle time.** Without it the clock kept ticking while the person thought over the questions, and after 45 minutes showed a "pause" that looked like a breakdown. `waits` intervals are subtracted from working time in full.
+- **The feed, gates and quotes are written by `ap.py`, not the agent.** Every extra command for the agent is a turn that re-reads its whole context; anything derivable from existing events is derived by the script.
+- **The narrow panel is the main screen.** The dashboard is most often viewed in the panel next to the chat (380–900 px), so compact mode kicks in from 900 px, not only on phones.
+- **The entrance animation runs only on first render.** The page rewrites `#app` on every event; animating every cycle would flicker.
 
-## Память проекта
+## Project memory
 
-- **`AGENTS.md` плюс однострочный `CLAUDE.md` с `@AGENTS.md`.** Claude Code читает `AGENTS.md` сам с v2.1.277, но только если нет `CLAUDE.md` ни в папке, ни выше, и не во всех сессиях. Импорт никогда не читает файл дважды.
-- **Свой файл пользователя не трогается** — только предложение в конце. Никогда не создаём `AGENTS.md` рядом с чужим `CLAUDE.md`: Claude Code его не прочтёт.
-- **Память — указатели, а не пересказ.** Каждую строку этого файла оплачивает каждая следующая сессия.
+- **`AGENTS.md` plus a one-line `CLAUDE.md` with `@AGENTS.md`.** Claude Code reads `AGENTS.md` on its own since v2.1.277, but only when there is no `CLAUDE.md` in the folder or above, and not in every session. An import never reads a file twice.
+- **The user's own file is left alone**: only a proposal at the end. Never create `AGENTS.md` next to someone else's `CLAUDE.md`: Claude Code will not read it.
+- **Memory is pointers, not a retelling.** Every line of that file is paid for by every later session.
 
-## Чего не делать при правках
+## What not to do when editing
 
-- Не держать в инструкциях агента то, что нужно только человеку, — сюда, в `docs/`.
-- Не выносить в текст то, что можно сделать кодом: всё механическое — в `ap.py`.
-- Не читать `dashboard-template.html` в контекст и не править его руками внутри прогона.
-- Не добавлять правило, не проверив его на прогоне: `tools/measure-run.py` показывает и расход по ролям, и где правило не сработало.
+- Do not keep in the agent's instructions what only a human needs: put it here, in `docs/`.
+- Do not put in text what code can do: everything mechanical goes into `ap.py`.
+- Do not read `dashboard-template.html` into context or hand-edit it during a run.
+- Do not add a rule without testing it on a run: `tools/measure-run.py` shows both spend by role and where a rule did not fire.
