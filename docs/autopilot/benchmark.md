@@ -42,6 +42,8 @@ python3 tools/measure-run.py "$HOME/Documents/VScode/Autopilot 2 test"
 3. **Quality**: the "Blind acceptance" block on the dashboard and the "Open questions" section of the report: how many requirements were confirmed and how many discrepancies.
 4. **Did the rules fire**: pre-commit review only for the foundation and risky tasks; follow-up requests carried only blocking items; `state.js` was not hand-edited (no Edit on `state.js` in the orchestrator log); one review of the whole branch at the end.
 
+> **Counting fixed 2026-10-12.** Every number on this page before this note was taken with a `measure-run.py` that counted log lines instead of model calls; Claude Code writes one call as several lines with the same usage. Re-measured: the 2.0 run is **11.26M** (orchestrator 2.70M over 96 calls, not 187), and the whole 1.x News Search 2 session 43.4M instead of 78.3M. Both were inflated about equally (1.9× and 1.8×), so the comparison below holds; the absolute numbers and step counts do not.
+
 ## Result: 2026-10-01
 
 The 2.0 run (`full`, T2, 6 tasks + 2 branch-repair tasks) against the first pass of News Search 2 on 1.x (`interview`, T2, 7 tasks). Normalized units from `measure-run.py`.
