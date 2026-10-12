@@ -20,7 +20,7 @@ A page for people who edit the skill. The agent never reads it: the instructions
 
 ## Measurements behind version 2.0
 
-Taken from eight real runs via Claude Code logs (September 2026, `tools/measure-run.py`). Units are normalized: output ×5, cache write ×1.25, cache read ×0.1. These are ratios between runs, not money.
+Taken from eight real runs via Claude Code logs (September 2026, `tools/measure-run.py`). Units are normalized: output ×5, cache write ×1.25, cache read ×0.1. These are ratios between runs, not money. **The absolute numbers below are inflated about 1.8–1.9×**: until 2026-10-12 the script counted log lines, and Claude Code writes one model call as several lines (thinking, text, tool call) with the same usage. Shares and comparisons between runs hold.
 
 | Run | Total | Review + repair | Executors | Orchestrator |
 |---|---|---|---|---|
@@ -36,6 +36,7 @@ What followed from this:
 - **The orchestrator widened repairs.** Follow-up requests carried 12–15 conditions when the review said "nothing blocking"; 13 of 13 tasks got repairs, 8 hit the cap of two. Hence: repair receives the `BLOCKING` lines verbatim, and the run-cost rules can only be broken by a line to the user.
 - **Bookkeeping took hundreds of turns.** Up to 48 `sync.py` calls and manual `state.js` edits per run, each turn re-reading the orchestrator's entire context. Hence: `ap.py`, one command per event, chainable with the check and the commit.
 - **The executor context ceiling never fired.** Executors took 100–370 steps; a task handoff happened once in about 60 tasks. The mechanism is gone; tight slicing replaces it.
+- **Executors were underloaded.** In the 2.0 control run (T2, 6 tasks) executors ended at 110–190K; four of six stayed under 125K. A new executor costs about 0.25M normalized units — 60–80K of cold start and half a dozen exploring calls, plus the orchestrator's calls to launch it, wake on its return and land it. A call at context X costs 0.1·X in cache reads, so a task's cost grows roughly with the square of its work: modelled on the run's numbers (start 70K, +3.2K per call), work that would take one executor to ~475K costs ~4.2M as one task, ~3.2M as two and ~3.0M as three. The two costs meet near 200–250K. Hence: tiers narrowed to 1–2 / 3–6 / 7–12, a size test that merges neighbours under ~220K and splits only past ~250K, and `measure-run.py` flagging executors that ended under 125K or over 250K. Why not 500–600K: cache reads were already half of the run's spend at 0.1 per token, and a five-minute pause rewrites a 500K context at ×1.25 — more than a fresh executor.
 - **The refinement mode was never switched on** in eight runs. The mode is gone; the user's reference now goes straight to the executors of UI tasks.
 - **Skill text.** The orchestrator's starting context was 188 KB before the edits, about 75 KB after.
 

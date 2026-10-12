@@ -272,11 +272,13 @@ Every task is a separate agent that has to get into the project from scratch: re
 | Job | How many tasks |
 |---|---|
 | Small — a landing page, a form, a script | **one.** Built in one pass by one agent |
-| One coherent feature | 2–3 |
-| Several features or layers | 4–8 |
-| Several independent subsystems | 9–16 |
+| One coherent feature | 1–2 |
+| Several features or layers | 3–6 |
+| Several independent subsystems | 7–12 |
 
-More than 16 is not allowed: the work is split into two runs. Fine-grained splitting doesn't buy reliability, it buys spend.
+More than 12 is not allowed: the work is split into two runs. Fine-grained splitting doesn't buy reliability, it buys spend.
+
+The other end has a limit too. Every step of an agent re-reads its whole context from the cache, so a task gets more expensive per step the longer it runs. Autopilot fills each agent to about 200–250K tokens: below that, a new agent costs more than it saves; above it, a fresh agent is cheaper than a long one.
 
 ### On development
 

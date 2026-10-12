@@ -2,17 +2,19 @@
 
 `ap.py stage plan`. Cut the spec into tickets, each built by its own subagent in a fresh context.
 
-**Every ticket boundary is a cold start** — read the interfaces, explore the code, find the commands: 20–40k tokens before a line is written. A ticket is worth creating only when the work inside it is bigger than that. **Fewer, denser tickets beat more, thinner ones**: each extra boundary is another context re-learning the project and another chance for two executors to disagree about an interface.
+**Every ticket boundary is a cold start** — read the interfaces, explore the code, find the commands: 60–80K tokens of context and a dozen steps before a line is written, plus the orchestrator's own turns to launch and land it. **Fewer, denser tickets beat more, thinner ones**: each extra boundary is another context re-learning the project and another chance for two executors to disagree about an interface.
+
+**Fill each executor to about 200–250K.** That is where a ticket should end, and where the other cost takes over: every step re-reads the whole context from the cache, so a ticket costs more per step the longer it runs, and a cache gone cold for five minutes rewrites all of it. Below that, a boundary costs more than the context it saves; above it, the long context costs more than a fresh one. Executors measured so far end at 100–190K — most tickets have room for their neighbour.
 
 ## Tier — read from the product, never from the length of the spec
 
 | Tier | The product | Tickets |
 |---|---|---|
 | **T0** | one surface, one layer, no external service — a page, a form, a script, an endpoint | **one**, built by one executor from the whole spec |
-| **T1** | one feature: a few surfaces over one data shape, at most one external service | 2–3 |
-| **T2** | several features, or one crossing store, logic, interface and integration | 4–8 |
-| **T3** | ≥ 3 genuinely independent subsystems, each with its own data | 9–16 |
-| **>16** | — | **not allowed** — justify it in the spec in a line, or split into two runs |
+| **T1** | one feature: a few surfaces over one data shape, at most one external service | 1–2 |
+| **T2** | several features, or one crossing store, logic, interface and integration | 3–6 |
+| **T3** | ≥ 3 genuinely independent subsystems, each with its own data | 7–12 |
+| **>12** | — | **not allowed** — justify it in the spec in a line, or split into two runs |
 
 A `deep` spec for a landing page is a long document about one page: still T0. Crossing a tier upward needs a reason written into the spec. State tier and count in one line to the user; `ap.py set tier=T2`.
 
@@ -22,8 +24,9 @@ A `deep` spec for a landing page is a long document about one page: still T0. Cr
 - **The shell, the schema, the shared primitives are ticket 01, alone.** Nothing parallelises with it.
 - Groundwork that makes later tickets easy goes early. Tickets closing `R` go before tickets closing only `A`.
 - Number from `01` in dependency order; each ticket names what it depends on.
+- **The size test.** One module with its tests — a zone of a few files, 6–9 criteria — ends near 100–120K: two of them fit in one executor. Merge neighbours that together stay under ~220K, even ones that would fly side by side — that trades a little clock time for a whole cold start. Split only a ticket that would run past ~250K: three modules' worth, or one module with a long debugging loop ahead of it — an unfamiliar integration.
 - **The payback test:** would its executor spend more flying in than building? Merge it into its neighbour. **The neighbour test:** under three acceptance criteria and the same files as an adjacent ticket? It is a checklist item there.
-- **The merge pass**, mandatory, before any file is written: merge adjacent tickets on the same files, thin tickets with a natural parent, and chains where A alone demos nothing. A draft of 14 that merges to 7 was T2 pretending to be T3. A wide change below is the one chain the merge pass leaves alone.
+- **The merge pass**, mandatory, before any file is written: merge adjacent tickets on the same files, thin tickets with a natural parent, and chains where A alone demos nothing. A draft of 12 that merges to 6 was T2 pretending to be T3. A wide change below is the one chain the merge pass leaves alone.
 
 ## A wide change — new beside old
 

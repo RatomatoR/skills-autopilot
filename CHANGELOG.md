@@ -11,6 +11,12 @@ npx skills update autopilot -g
 - README, this changelog and `docs/` are now in English; the Russian README lives on as [README.ru.md](README.ru.md). Screenshots show the English dashboard, each one a different part of it: the header, build progress, a finished build's report, waiting for you, your words.
 - Dashboard: in English, ticket titles in the header are quoted “like this” instead of «like this».
 
+**Fewer, fuller tasks**
+- Each agent now gets about 200–250K tokens of work instead of 100–150K, so a build is cut into fewer tasks: one feature into 1–2 (was 2–3), several features into 3–6 (was 4–8), independent subsystems into 7–12 (was 9–16). Neighbouring tasks that fit together are merged; a task is split only when it would run past ~250K, where a fresh agent becomes cheaper than a long one.
+- `tools/measure-run.py` shows which executors ended underloaded (under 125K — the task should have been merged) or overloaded (over 250K — it should have been split), and now recognises tasks named `T03 …` as executors.
+- The orchestrator handles one event in one message — the `ap.py` mark, the commit, the next launch together — instead of a call that only marks followed by one that only launches: about 10 calls fewer per T2 run, each re-reading a context near 200K.
+- `tools/measure-run.py` counted every model call two or three times — Claude Code logs one call as several lines (thinking, text, tool call) with the same usage — so every measured total was about 1.8–1.9× too high. A step is now one call. Comparisons between old runs still hold; absolute numbers in `docs/` are marked.
+
 **Memory between builds**
 - `.autopilot/PROGRESS.md` — what a finished build left: what you settled ("no SMS"), what is not done, known bugs. Rewritten at every landing.
 - Small fixes without a new build: `AGENTS.md` now tells a plain session what to read first (the progress file and the commits since the last build) and what to write back after the fix.
