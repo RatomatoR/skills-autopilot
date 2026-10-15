@@ -105,7 +105,7 @@ Binding on every phase; the phases do not restate it.
 ├── dashboard.html   the human view; carries a snapshot of the state
 └── index.html       → dashboard.html
 
-AGENTS.md (+ CLAUDE.md → @AGENTS.md)   the project memory — or the user's own file, left untouched
+AGENTS.md (+ CLAUDE.md → AGENTS.md)    the project memory — or the user's own file, left untouched
 docs/architecture.md, docs/adr/        at T2+: how it is built, and why
 CONTEXT.md                             at T2+: the project's words — or the user's own, only added to
 ```
