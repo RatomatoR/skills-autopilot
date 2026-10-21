@@ -6,23 +6,14 @@ The skill's version is the `metadata.version` field in `skills/autopilot/SKILL.m
 npx skills update autopilot -g
 ```
 
-## Unreleased
-
-- README, this changelog and `docs/` are now in English; the Russian README lives on as [README.ru.md](README.ru.md). Screenshots show the English dashboard, each one a different part of it: the header, build progress, a finished build's report, waiting for you, your words.
-- Dashboard: in English, ticket titles in the header are quoted “like this” instead of «like this».
-
-**Fewer, fuller tasks**
-- Each agent now gets about 200–250K tokens of work instead of 100–150K, so a build is cut into fewer tasks: one feature into 1–2 (was 2–3), several features into 3–6 (was 4–8), independent subsystems into 7–12 (was 9–16). Neighbouring tasks that fit together are merged; a task is split only when it would run past ~250K, where a fresh agent becomes cheaper than a long one.
-- `tools/measure-run.py` shows which executors ended underloaded (under 125K — the task should have been merged) or overloaded (over 250K — it should have been split), and now recognises tasks named `T03 …` as executors.
-- The orchestrator handles one event in one message — the `ap.py` mark, the commit, the next launch together — instead of a call that only marks followed by one that only launches: about 10 calls fewer per T2 run, each re-reading a context near 200K.
-- `tools/measure-run.py` counted every model call two or three times — Claude Code logs one call as several lines (thinking, text, tool call) with the same usage — so every measured total was about 1.8–1.9× too high. A step is now one call. Comparisons between old runs still hold; absolute numbers in `docs/` are marked.
+## 2.2.0 — 2026-10-21
 
 **Size by volume, review without waiting**
 - A build is now sized by the volume of code, not by the kind of product: one agent per ~3,000 changed lines, tests included. Up to ~3K lines is one task — one agent builds the whole spec in one fresh context, like a plain dialogue; a list of edits to an existing project usually lands here. ~3–6K is two tasks, ~6–18K three to six, ~18–36K seven to twelve; more is two runs. This replaces "fill each agent to 200–250K", which real runs on a large codebase never hit: their agents ended at 300–420K.
 - Code review of a single task only for the first task the rest build on and for tasks whose own code is sign-in, keys, money or deleting data. "Touches access rights" no longer counts: in one product it marked 12 tasks of 15.
 - That review runs after the task's commit, alongside the next tasks, and never holds the build; a fix is a second commit. At most one re-check of a fix, then what is still open goes to the final review.
 - The review of the whole build at the end stays, always.
-- `tools/measure-run.py` judges executors against the new size: under 150K — should have been merged, over 450K — should have been split.
+- The orchestrator handles one event in one message — the `ap.py` mark, the commit, the next launch together — instead of a call that only marks followed by one that only launches: about 10 calls fewer per T2 run, each re-reading a context near 200K.
 
 **Memory between builds**
 - `.autopilot/PROGRESS.md` — what a finished build left: what you settled ("no SMS"), what is not done, known bugs. Rewritten at every landing.
@@ -31,6 +22,14 @@ npx skills update autopilot -g
 - The next build reads the progress file and the history since the last landing before anything else. It offers the leftovers in the first briefing round, never takes them on its own, and passes what you settled to every executor as project rules.
 - Commits carry `Autopilot-Run` and `Requirements` trailers, so `git log --grep="R02"` finds everything a requirement ever caused.
 - `ap.py commits` — on resume, flags finished tickets whose commit is no longer in the history (a reset or a rebase), so they are rebuilt instead of trusted.
+
+**Measuring runs**
+- `tools/measure-run.py` counted every model call two or three times — Claude Code logs one call as several lines (thinking, text, tool call) with the same usage — so every measured total was about 1.8–1.9× too high. A step is now one call. Comparisons between old runs still hold; absolute numbers in `docs/` are marked.
+- It now recognises tasks named `T03 …` as executors and judges them against the new size: under 150K — should have been merged, over 450K — should have been split.
+
+**Docs**
+- README, this changelog and `docs/` are now in English; the Russian README lives on as [README.ru.md](README.ru.md). Screenshots show the English dashboard, each one a different part of it: the header, build progress, a finished build's report, waiting for you, your words.
+- Dashboard: in English, ticket titles in the header are quoted “like this” instead of «like this».
 
 ## 2.1.0 — 2026-10-10
 
