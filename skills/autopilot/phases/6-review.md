@@ -2,10 +2,10 @@
 
 Two moments, both done by someone who did not write the code:
 
-- **Point review during the build** — for tickets whose file says `Ревью: да` (the foundation and the risky ones, `phases/4-plan.md`), and for a ticket whose contract reports one of its own requirements as not done — before the commit. At T0 there is none: the whole-branch review is that ticket's review.
-- **The whole-branch review** — once, after the last ticket, as the `review` stage.
+- **Point review during the build** — for tickets whose file says `Ревью: да` (the foundation and the narrow list of risks, `phases/4-plan.md`), and for a ticket whose contract reports one of its own requirements as not done. **After the commit, never before it**: the ticket lands on a green check, the next wave flies, and the review runs beside it. At T0 there is none: the whole-branch review is that ticket's review.
+- **The whole-branch review** — once, after the last ticket, as the `review` stage. **Always**, at every tier and in every mode.
 
-Every other ticket is committed on a green check and reviewed as part of the branch. Why this shape, with the measurements behind it: `docs/autopilot/design.md` in the skill's repository.
+Every other ticket is reviewed only as part of the branch. Why this shape, with the measurements behind it: `docs/autopilot/design.md` in the skill's repository.
 
 ## Three axes, reported separately
 
@@ -21,15 +21,19 @@ Merged or ranked together, one axis masks another. **Which axis a finding belong
 
 **One fresh subagent per review**, on the strong model — never a reviewer kept alive across tickets.
 
-It gets, by path: **`prompts/review.md`** (`skillDir`), required reading before the diff; the ticket file — its brief quotes are the Manifest axis; the spec sections the ticket names; `interfaces.md`; whatever the repo documents about how code is written. Pasted: the executor's `TESTS` and `REDPROOF` lines, and **why it is reviewed** — «фундамент», the named risk, or «оговорка о требовании»: that decides what blocks. And the command that shows the uncommitted work of its zone — `git add -N -- <zone> && git diff -- <zone>`, where `-N` makes new files visible. It must not repair, refactor, invoke skills or spawn agents.
+**Launch it in the background right after the commit** — `ap.py ticket NN review`, then the subagent — and go on with the build: launch the next wave, land other tickets. Waiting on a point review is never a reason to hold a wave.
 
-What comes back is a verdict per axis and a `BLOCKING` line. `BLOCKING` → `phases/5-repair.md`, verbatim. `FINDINGS` → `ap.py add concerns "…" "…"`, one call, each with its file and line. Neither the diff nor the reasoning reaches you.
+It gets, by path: **`prompts/review.md`** (`skillDir`), required reading before the diff; the ticket file — its brief quotes are the Manifest axis; the spec sections the ticket names; `interfaces.md`; whatever the repo documents about how code is written. Pasted: the executor's `TESTS` and `REDPROOF` lines, and **why it is reviewed** — «фундамент», the named risk, or «оговорка о требовании»: that decides what blocks. And the command that shows the ticket's commit — `git show <commit>`. It must not repair, refactor, invoke skills or spawn agents.
 
-**The re-review of a repair** — mode «ремонт» in `prompts/review.md`, again a fresh subagent. So that it sees the fix and not the whole ticket again, `git add -A -- <zone>` **before** the дозапрос goes out: the repair is then exactly `git diff -- <zone>`. It gets that command and the conditions the repair had to close, and answers each closed or not.
+What comes back is a verdict per axis and a `BLOCKING` line. Nothing blocking → `ap.py ticket NN done` again, and the ticket is finished. `BLOCKING` → `phases/5-repair.md`, verbatim: the fix is a second commit of the same zone. `FINDINGS` → `ap.py add concerns "…" "…"`, one call, each with its file and line. Neither the diff nor the reasoning reaches you.
+
+**When a blocking fix changes an interface** that tickets now in flight call, append the change to `interfaces.md` and send each of them one line when it returns — before its commit.
+
+**The re-review of a repair** — mode «ремонт» in `prompts/review.md`, again a fresh subagent, **at most once per ticket**. It gets `git diff <ticket commit>..<repair commit> -- <zone>` — the fix, not the whole ticket again — and the conditions the repair had to close, and answers each closed or not.
 
 ## What blocks
 
-**Only the reviewer's `BLOCKING` line holds up a commit**, and what may appear there is short:
+**Only the reviewer's `BLOCKING` line triggers a repair**, and what may appear there is short:
 
 - **Manifest `partial` or `missing`** — a requirement the user asked for is not delivered.
 - **An invented fact** — a plausible price, address or text where the user's own fact belongs.
@@ -48,7 +52,7 @@ After the build: `ap.py stage review`.
 
 It returns every finding sorted into three: **fix now** — it costs more to leave than to close, and the fix is bounded; **report** — real, not worth holding delivery for; **drop** — taste, or the code it pointed at is gone. Anything repeated across three or more tickets is **fix now**: that is a convention the project never settled. A security finding is fix now or report — never drop.
 
-**All the fix-now findings become one ticket, `F1`**: `tickets/F1-<slug>.md` with the requirements the fixed code serves, `Зависит от: —`, the wave after the last one, the union of the files named as its zone, `Ревью: да — ремонт ветки`, `Модель: сильная`, and the findings as its acceptance criteria, verbatim. `ap.py tickets`, one executor, the check, a re-review in mode «ремонт», one commit — never by you, never by the reviewer: a fix that skips the ticket path skips the rollback point and the green check. Every «report» finding → `ap.py add report "…" "…"`, in words the user understands; the final report reads them from there.
+**All the fix-now findings become one ticket, `F1`**: `tickets/F1-<slug>.md` with the requirements the fixed code serves, `Зависит от: —`, the wave after the last one, the union of the files named as its zone, `Ревью: да — ремонт ветки`, `Модель: сильная`, and the findings as its acceptance criteria, verbatim. `ap.py tickets`, one executor, the check, one re-review in mode «ремонт» — what it still finds open goes to the report, not to a second round — one commit — never by you, never by the reviewer: a fix that skips the ticket path skips the rollback point and the green check. Every «report» finding → `ap.py add report "…" "…"`, in words the user understands; the final report reads them from there.
 
 Then `phases/8-final.md`.
 

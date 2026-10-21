@@ -22,7 +22,7 @@
 | «Интерфейсы устаканятся по ходу — первый таск задаст» | Тогда их задаст тот, кто видел одну восьмую задачи. |
 | «Отчёт напишу по памяти» | К финалу твой контекст самый загрязнённый. Отчёт собирается из файлов, перечитанных с диска. |
 | «Блокирующего нет, но раз уж нашлось — пусть поправит» | Блокирует то, что ревьюер записал в `BLOCKING`. Остальное ждёт ревью ветки; расширить — строка пользователю с ценой. |
-| «Таск простой — ревью ему не нужно, хотя он помечен» | Пометку `Ревью: да` ставит план, а не настроение: фундамент и риск ревьюятся всегда. |
+| «Таск простой — ревью ему не нужно, хотя он помечен» | Пометку `Ревью: да` ставит план, а не настроение: фундамент и узкий список рисков ревьюятся всегда — после коммита, не держа сборку. |
 | «Проект собран, тесты зелёные — значит, работает» | Тесты писал тот же процесс, что и код. Пока проект никто не запустил, «работает» — гипотеза. |
 | «Пользователь не спрашивал про режимы — не буду грузить» | В чате нет `--help`. Стартовый блок — единственное место, где он узнаёт, что у сборки есть ручки. |
 
@@ -50,7 +50,7 @@
 - The orchestrator editing a file outside `.autopilot/`, the memory files, `.gitignore` and `.env.example`.
 - A diff or a raw test log read into the orchestrator's context.
 - A дозапрос carrying more than the reviewer's `BLOCKING` lines.
-- A reviewer kept alive across tickets, or a ticket marked `Ревью: да` committed without its review.
+- A reviewer kept alive across tickets, a ticket marked `Ревью: да` finished without its review, or a wave held back to wait for one.
 - Parallel executors on the same files — or independent tickets flown one at a time.
 - A subagent launched without `interfaces.md` or `prompts/executor.md`, or finishing without the contract block.
 - A secret asked for, repeated back, or written anywhere.

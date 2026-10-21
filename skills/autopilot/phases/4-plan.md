@@ -2,21 +2,25 @@
 
 `ap.py stage plan`. Cut the spec into tickets, each built by its own subagent in a fresh context.
 
-**Every ticket boundary is a cold start** — read the interfaces, explore the code, find the commands: 60–80K tokens of context and a dozen steps before a line is written, plus the orchestrator's own turns to launch and land it. **Fewer, denser tickets beat more, thinner ones**: each extra boundary is another context re-learning the project and another chance for two executors to disagree about an interface.
+**Every ticket boundary is a cold start** — read the interfaces, explore the code, find the commands: 60–80K tokens of context in a new repo, well over 100K in a large existing one, and a dozen steps before a line is written, plus the orchestrator's own turns to launch and land it. **Fewer, denser tickets beat more, thinner ones** — but only down to what one context can hold.
 
-**Fill each executor to about 200–250K.** That is where a ticket should end, and where the other cost takes over: every step re-reads the whole context from the cache, so a ticket costs more per step the longer it runs, and a cache gone cold for five minutes rewrites all of it. Below that, a boundary costs more than the context it saves; above it, the long context costs more than a fresh one. Executors measured so far end at 100–190K — most tickets have room for their neighbour.
+## Size — read from the volume of code, never from the length of the spec
 
-## Tier — read from the product, never from the length of the spec
+**One executor builds about 3,000 lines** — changed lines, tests included. That is where its context gets heavy: every step re-reads all of it from the cache, so each step costs more than the last. Measured: an 11-ticket run of ~29K lines ended its executors at 300–420K; a single dialogue of ~1,300 lines in a large existing codebase used two thirds of its window.
 
-| Tier | The product | Tickets |
+**Estimate the volume first**, from the spec and, in existing code, from `notes.md`: how many screens, endpoints, tables, flows, and how much of the existing code each one changes. One line to yourself — «~8K строк: чат ~3K, приглашения ~2K, лимиты ~1,5K, остальное ~1,5K» — then:
+
+| Volume | Tickets | Tier |
 |---|---|---|
-| **T0** | one surface, one layer, no external service — a page, a form, a script, an endpoint | **one**, built by one executor from the whole spec |
-| **T1** | one feature: a few surfaces over one data shape, at most one external service | 1–2 |
-| **T2** | several features, or one crossing store, logic, interface and integration | 3–6 |
-| **T3** | ≥ 3 genuinely independent subsystems, each with its own data | 7–12 |
-| **>12** | — | **not allowed** — justify it in the spec in a line, or split into two runs |
+| **up to ~3K lines** | **one** — one executor gets the whole spec and builds it in one fresh context, start to finish. No waves, no point review | **T0** |
+| ~3–6K | 2 | **T1** |
+| ~6–18K | 3–6, one per ~3K | **T2** |
+| ~18–36K | 7–12, one per ~3K | **T3** |
+| more | **not allowed** — split into two runs | |
 
-A `deep` spec for a landing page is a long document about one page: still T0. Crossing a tier upward needs a reason written into the spec. State tier and count in one line to the user; `ap.py set tier=T2`.
+**T0 is the default for a list of edits in existing code** — eighteen fixes across a codebase are usually under 3K lines, however many files they touch. The executor works through them in one context, like a single dialogue, and the whole-branch review checks the result.
+
+A `deep` spec for a landing page is a long document about one page: still T0. State the volume, tier and count in one line to the user; `ap.py set tier=T2`.
 
 ## How to cut
 
@@ -24,9 +28,9 @@ A `deep` spec for a landing page is a long document about one page: still T0. Cr
 - **The shell, the schema, the shared primitives are ticket 01, alone.** Nothing parallelises with it.
 - Groundwork that makes later tickets easy goes early. Tickets closing `R` go before tickets closing only `A`.
 - Number from `01` in dependency order; each ticket names what it depends on.
-- **The size test.** One module with its tests — a zone of a few files, 6–9 criteria — ends near 100–120K: two of them fit in one executor. Merge neighbours that together stay under ~220K, even ones that would fly side by side — that trades a little clock time for a whole cold start. Split only a ticket that would run past ~250K: three modules' worth, or one module with a long debugging loop ahead of it — an unfamiliar integration.
+- **The size test.** Merge neighbours that together stay under ~3K lines, even ones that would fly side by side — that trades a little clock time for a whole cold start. Split only a ticket that would run past ~3K lines, or one with a long debugging loop ahead of it — an unfamiliar integration.
 - **The payback test:** would its executor spend more flying in than building? Merge it into its neighbour. **The neighbour test:** under three acceptance criteria and the same files as an adjacent ticket? It is a checklist item there.
-- **The merge pass**, mandatory, before any file is written: merge adjacent tickets on the same files, thin tickets with a natural parent, and chains where A alone demos nothing. A draft of 12 that merges to 6 was T2 pretending to be T3. A wide change below is the one chain the merge pass leaves alone.
+- **The merge pass**, mandatory, before any file is written: merge adjacent tickets on the same files, thin tickets with a natural parent, and chains where A alone demos nothing. A draft of 12 tickets for ~18K lines was T2 cut too thin. A wide change below is the one chain the merge pass leaves alone.
 
 ## A wide change — new beside old
 
@@ -44,10 +48,10 @@ Every ticket of the chain carries the same requirement. It applies when the chan
 
 ## Review and model — decided per ticket, here
 
-**Review** — whether the ticket gets a point review before its commit (`phases/6-review.md`). Everything else is reviewed once, at the end, as part of the whole branch.
+**Review** — whether the ticket gets a point review after its commit (`phases/6-review.md`). It never holds up the build: the next tickets fly while it runs. **Every ticket is reviewed once at the end anyway**, as part of the whole branch — a point review is only for what is worth catching earlier.
 
-- `да — фундамент` — ticket 01, and any ticket building a shared module, the schema, or an interface other tickets call.
-- `да — <риск>` — anything touching login and access rights, money, deleting or migrating user data, secrets, or messages sent to third parties.
+- `да — фундамент` — ticket 01, when later tickets build on it, and the expand step of a wide change. Nothing else is foundation.
+- `да — <риск>` — a ticket whose **own code** is one of these: sign-in, passwords, sessions, 2FA; keys and secrets; money; deleting or migrating user data. A ticket that only checks permissions inside an ordinary feature is not a risk ticket — the whole-branch review covers it. Most tickets in a product with access rights touch them; marking them all is how a run reviews 12 tickets of 15.
 - `нет` — the rest. Most tickets. **At T0 the one ticket is `нет` too**: the whole-branch review is its review, and a point review would read the same diff twice.
 
 **Model** — who builds it.

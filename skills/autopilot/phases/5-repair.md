@@ -15,7 +15,7 @@ Two counters, both capped at two: `repairs` (дозапросы) and `retries` (
 | You send | the condition, nothing else | the ticket again, the error, the failing test named, the path now spelled out |
 | Because | it holds why the code is the way it is; a cold reader repairs the symptom and breaks the reason | its context *is* the failure — the same request gets the same answer |
 
-`ap.py ticket NN repair --note "условие одной строкой"` before the message goes out — and for a reviewed ticket `git add -A -- <zone>` too, so the re-review sees only the fix. A дозапрос is short:
+`ap.py ticket NN repair --note "условие одной строкой"` before the message goes out. **A point review comes after the commit**, so its repair is a second commit of the same zone — «T03: ремонт по ревью», the same trailers — and the re-review reads exactly that commit. If a ticket now in flight owns any file of that zone, the дозапрос waits until that ticket lands. A дозапрос is short:
 
 ```
 Тест `parses empty address` красный:
@@ -28,8 +28,8 @@ Two counters, both capped at two: `repairs` (дозапросы) and `retries` (
 - **The cause first, then the fix.** No cause found → `BLOCKED`, not a workaround. **A weakened or deleted assertion is not a repair.**
 - **A condition, never «поправь»** — this test green, this field visible, this error handled.
 - **The repair returns the contract again** — new `FILES`, new `TESTS`.
-- **A reviewed ticket's repair is re-reviewed, scoped to the fix** — mode «ремонт» in `prompts/review.md`: a fresh reviewer gets `git diff -- <zone>` and the conditions, verdicts each closed or not, and flags new breakage inside the fix only. Never the whole ticket again. A repair of an unreviewed ticket (a red check) needs only the check green again.
-- **Two re-reviews per ticket, then it lands.** What the second re-review still finds open goes to the report with its reproduction (`ap.py add report`), unless it is a red check or a requirement not delivered — those stay blocking. A sanitizer a reviewer can always find one more bypass for is the typical case.
+- **A reviewed ticket's repair is re-reviewed, scoped to the fix** — mode «ремонт» in `prompts/review.md`: a fresh reviewer gets the diff of the repair commit and the conditions, verdicts each closed or not, and flags new breakage inside the fix only. Never the whole ticket again. A repair of an unreviewed ticket (a red check) needs only the check green again.
+- **One re-review per ticket, then it is finished.** What the re-review still finds open goes to the whole-branch review as a concern (`ap.py add concerns`) — it is fixed in `F1` or reported there, never in a third round here. A red check stays blocking: it is a дозапрос, closed by the check, not by another review. A sanitizer a reviewer can always find one more bypass for is the typical case.
 - **Two дозапроса into one context, then the right-hand column.**
 - If the harness cannot continue a subagent, the fallback is a fresh context with the full ticket prompt plus the finding — never your own keyboard.
 

@@ -17,6 +17,13 @@ npx skills update autopilot -g
 - The orchestrator handles one event in one message — the `ap.py` mark, the commit, the next launch together — instead of a call that only marks followed by one that only launches: about 10 calls fewer per T2 run, each re-reading a context near 200K.
 - `tools/measure-run.py` counted every model call two or three times — Claude Code logs one call as several lines (thinking, text, tool call) with the same usage — so every measured total was about 1.8–1.9× too high. A step is now one call. Comparisons between old runs still hold; absolute numbers in `docs/` are marked.
 
+**Size by volume, review without waiting**
+- A build is now sized by the volume of code, not by the kind of product: one agent per ~3,000 changed lines, tests included. Up to ~3K lines is one task — one agent builds the whole spec in one fresh context, like a plain dialogue; a list of edits to an existing project usually lands here. ~3–6K is two tasks, ~6–18K three to six, ~18–36K seven to twelve; more is two runs. This replaces "fill each agent to 200–250K", which real runs on a large codebase never hit: their agents ended at 300–420K.
+- Code review of a single task only for the first task the rest build on and for tasks whose own code is sign-in, keys, money or deleting data. "Touches access rights" no longer counts: in one product it marked 12 tasks of 15.
+- That review runs after the task's commit, alongside the next tasks, and never holds the build; a fix is a second commit. At most one re-check of a fix, then what is still open goes to the final review.
+- The review of the whole build at the end stays, always.
+- `tools/measure-run.py` judges executors against the new size: under 150K — should have been merged, over 450K — should have been split.
+
 **Memory between builds**
 - `.autopilot/PROGRESS.md` — what a finished build left: what you settled ("no SMS"), what is not done, known bugs. Rewritten at every landing.
 - Small fixes without a new build: `AGENTS.md` now tells a plain session what to read first (the progress file and the commits since the last build) and what to write back after the fix.

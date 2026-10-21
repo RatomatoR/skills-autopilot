@@ -262,23 +262,23 @@ The main principle: **the order is the product**. Code is written in the second-
 | **Spec** | Requirements unfold into worked-out scenarios |
 | **Plan** | The spec is cut into tasks — or not, if the job is small — and laid out in waves: what can be built at the same time, and what only in order |
 | **Development** | One task = one separate agent with a clean memory, one commit; independent tasks run in parallel |
-| **Code review** | The foundation and risky tasks (sign-in, money, deleting data) are checked before commit; at the end — the whole build: match with the brief and the spec, code quality, security |
+| **Code review** | At the end, always — the whole build: match with the brief and the spec, code quality, security. Earlier and on its own — only the first task the rest build on, and tasks about sign-in, keys, money and deleting data; that check runs alongside and never holds the build |
 | **Acceptance** | A separate agent installs the project from scratch in a clean copy, runs it and checks the result against your original task; the project description for the future; the report |
 
 ### On splitting into tasks
 
-Every task is a separate agent that has to get into the project from scratch: read the contracts, study the code, figure out the stack. That's expensive. So Autopilot splits by tiers, not by "the smaller, the safer":
+Every task is a separate agent that has to get into the project from scratch: read the contracts, study the code, figure out the stack. That's expensive. So Autopilot splits by the volume of code, not by "the smaller, the safer": one agent writes about 3,000 lines, tests included.
 
-| Job | How many tasks |
+| Volume | How many tasks |
 |---|---|
-| Small — a landing page, a form, a script | **one.** Built in one pass by one agent |
-| One coherent feature | 1–2 |
-| Several features or layers | 3–6 |
-| Several independent subsystems | 7–12 |
+| Up to ~3K lines — a landing page, a form, a script, a list of edits to an existing project | **one.** One agent builds it all in one pass, like a plain dialogue |
+| ~3–6K | 2 |
+| ~6–18K | 3–6, one per ~3K lines |
+| ~18–36K | 7–12 |
 
 More than 12 is not allowed: the work is split into two runs. Fine-grained splitting doesn't buy reliability, it buys spend.
 
-The other end has a limit too. Every step of an agent re-reads its whole context from the cache, so a task gets more expensive per step the longer it runs. Autopilot fills each agent to about 200–250K tokens: below that, a new agent costs more than it saves; above it, a fresh agent is cheaper than a long one.
+The other end has a limit too. Every step of an agent re-reads its whole context from the cache, so a task gets more expensive per step the longer it runs. About 3,000 lines is roughly 300–400K tokens of context: past that, a fresh agent is cheaper than a long one.
 
 ### On development
 
@@ -291,7 +291,7 @@ The other end has a limit too. Every step of an agent re-reads its whole context
 | Tasks sharing files run one after another | Otherwise two agents overwrite each other's work |
 | A full check after every task — tests, types, linter | A regression costs a minute, not an evening |
 | Routine tasks go to a cheaper model, the foundation and risky ones to a strong one | You pay for the strong model where it makes a difference |
-| Review is targeted and at the end, not after every task | Review used to eat up to half the spend; the defects worth holding a task for live in the foundation and the risky parts |
+| Review at the end; on its own only the foundation and a narrow list of risks — in parallel, without stopping the build, and at most one re-check | Review used to eat up to half the spend, and a check after every task held it for 15–40 minutes; the defects worth catching earlier live in the foundation and in sign-in, keys, money and deletion code |
 | Fixes after review are made by the same agent that wrote the code | It remembers why the code is the way it is; someone else fixes the symptom and breaks the cause |
 | The main conversation writes no code at all — it only hands out work and checks it | Its context is one for the whole run and never refreshes: every diff read on task two gets in the way on task eight |
 | A failed task — a retry, then an attempt another way | If that fails too, the agent stops and explains in plain words |
@@ -408,7 +408,7 @@ skills/autopilot/
 │   ├── 2-briefing.md           questions in rounds, reference
 │   ├── 2-adversarial.md        where the idea might fail — in interview mode and at maximum depth
 │   ├── 3-spec.md               the spec and how deep to work it out
-│   ├── 4-plan.md               splitting into tasks, tiers, waves, who gets review and which model
+│   ├── 4-plan.md               splitting into tasks by volume, waves, who gets review and which model
 │   ├── 5-subagents.md          executor agents and the contracts between them
 │   ├── 5-repair.md             repair and failure — only when a task came back not clean
 │   ├── 6-review.md             targeted review and the review of the whole build

@@ -32,7 +32,7 @@ A subagent has a filesystem; pasting what it can read writes the same words twic
 
 Phase 4 gave every ticket a wave and a zone. **Launch a whole wave in one message, one subagent call per ticket, in the background** — two calls in two messages run one after the other, and the parallelism computed in the plan is thrown away in the delivery.
 
-- **At most three in flight.** A wave of five goes out as three, then two.
+- **At most three in flight.** A wave of five goes out as three, then two. A point reviewer reads a commit and writes nothing — it does not count against the three.
 - **Zones disjoint** — checked again at launch; same files → serialise. When in doubt, serialise.
 - **A wave is not a barrier.** When a ticket returns, first launch the next ticket whose dependencies are all committed, then process the one that landed.
 - **A dependent never launches on an uncommitted parent.**
@@ -67,9 +67,8 @@ In this order:
 2. **Nothing outside the zone.** `git status --porcelain`: a changed file outside this ticket's zone, `.env.example` and the zones still in flight is a дозапрос — put it back or say why it had to change.
 3. **Append its `INTERFACES` to `interfaces.md`** — you, never the executors; parallel writers collide. Two returns claiming one interface is a plan defect: keep the one that fits and re-cut the other.
 4. **Run the check**, full, truncated: `<check> 2>&1 | tail -30`, **and read it before anything else happens** — green or red, the names of what failed, and the count. Compare the count with the contract: a `DONE` that added criteria and no tests is a дозапрос, and a suite reporting zero tests is red however it exits.
-5. **Point review, if the ticket says `Ревью: да`**, or the contract reports one of its requirements as not done: `ap.py ticket NN review`, then `phases/6-review.md`.
-6. **Red, or a `BLOCKING` finding → `phases/5-repair.md`.** Nothing is committed on red, and nothing is repaired by you.
-7. **Commit and record — one call, only its zone:**
+5. **Red → `phases/5-repair.md`.** Nothing is committed on red, and nothing is repaired by you.
+6. **Commit and record — one call, only its zone:**
 
    ```bash
    git add -A -- src/bot/ tests/bot/ .env.example && git commit -qm "T03: приём заявки" \
@@ -78,6 +77,7 @@ In this order:
    ```
 
    The paths are every path of its zone that exists, plus `.env.example` if the ticket changed it — git refuses a path that matches nothing; `--tests` is what step 4 actually printed; `--placeholder R05` for each row the contract reports as a stub. One commit per ticket — the user's rollback points. **The trailers make the history searchable after the run is gone**: `Autopilot-Run` is `dir` without `--wip` (ticket numbers restart every run, so `T03` alone names several tickets), `Requirements` the ticket's rows. `git log --grep="R02"` then finds every change a requirement ever caused.
+7. **Point review, if the ticket says `Ревью: да`**, or the contract reports one of its requirements as not done: `ap.py ticket NN review`, the reviewer in the background, and straight on to the next step and the next wave (`phases/6-review.md`). Its `BLOCKING` lines, when they come, go to `phases/5-repair.md`.
 8. **The ledger.** Each stub the contract names → `ap.py add debt.placeholders`; each new variable → `add debt.emptyEnv NAME`; each `A##` that reached the code → `add additions`; each `CONCERNS` line about craft → `add concerns`. Project memory only if something was discovered (`phases/9-memory.md`, Moment 2) — most tickets add nothing.
 9. **One plain line to the user**: «Бот принимает заявки — 3 из 8 готово».
 
@@ -85,4 +85,4 @@ In this order:
 
 ## When the build is over
 
-Every ticket is `done`, or `failed` with its dependents named to the user as waiting. Then `ap.py stage review` and `phases/6-review.md` — the whole-branch review.
+Every ticket is `done`, or `failed` with its dependents named to the user as waiting — point reviews included: none still running, every repair they asked for landed. Then `ap.py stage review` and `phases/6-review.md` — the whole-branch review.
